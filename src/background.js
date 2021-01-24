@@ -1,5 +1,6 @@
 import 'libs/polyfills';
 import browser from 'webextension-polyfill';
+import { baseURLRegex } from 'constants/regex';
 
 browser.runtime.onMessage.addListener(async msg => {
   if (msg.greeting === 'showOptionsPage') {
@@ -9,24 +10,26 @@ browser.runtime.onMessage.addListener(async msg => {
 
 chrome.tabs.onActivated.addListener(function(activeInfo) {
   chrome.tabs.get(activeInfo.tabId, async function(tab) {
-    const url = tab.url;
+    const [baseURL] = tab.url.match(baseURLRegex);
 
-    // const all = await browser.storage.sync.get();
+    if (baseURL) {
+      const { list, active: focusModeActive } = await browser.storage.sync.get();
 
-    // alert(JSON.stringify({ ...all }, null, 2));
-    // if (url) {
-    //   const { list } = await browser.storage.sync.get();
-    //   const hostname = new URL(url).host;
-    //   const blockedHostname = list.map(({ url }) => url);
-    //   const isBlocked = blockedHostname.includes(hostname);
-    //   if (isBlocked) {
-    //     browser.tabs.sendMessage(activeInfo.tabId, {
-    //       message: hostname,
-    //       tabId: activeInfo.tabId,
-    //       url: url,
-    //     });
-    //   }
-    // }
+      const pausedURL = list.map(({ url }) => {
+        const [baseURL] = url.match(baseURLRegex);
+        return baseURL;
+      });
+
+      const isPause = pausedURL.includes(baseURL);
+
+      if (isPause) {
+        browser.tabs.sendMessage(activeInfo.tabId, {
+          isPause,
+          focusModeActive,
+          baseURL,
+        });
+      }
+    }
   });
 });
 

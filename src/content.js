@@ -8,6 +8,7 @@ import styled, { createGlobalStyle, StyleSheetManager } from 'styled-components'
 import browser from 'webextension-polyfill';
 import { Focus as FocusIcon } from '@styled-icons/remix-line/Focus';
 import { baseURLRegex } from 'constants/regex';
+import useStore from 'hooks/useStore';
 
 const GlobalStyle = createGlobalStyle`
   :host {
@@ -118,14 +119,16 @@ const App = () => {
   const [active, setActive] = useState(false);
   const [pageData, setPageData] = useState({ baseURL: '' });
 
+  const { active: focusModeActive } = useStore();
+  console.log({ active, focusModeActive });
+
   useEffect(() => {
-    // listen for messages sent from background.js
-    // browser.runtime.onMessage.addListener(function(request, sender, sendResponse) {
-    //   if (request.message) {
-    //     setActive(true);
-    //     setPageData({ baseURL: request.message, tabId: request.tabId });
-    //   }
-    // });
+    browser.runtime.onMessage.addListener(function(request) {
+      if (request && request.isPause && request.focusModeActive) {
+        setActive(true);
+        setPageData({ baseURL: request.baseURL });
+      }
+    });
 
     const getList = async () => {
       const { list, active: focusModeActive } = await browser.storage.sync.get();
