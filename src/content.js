@@ -127,6 +127,9 @@ const App = () => {
       if (request && request.isPause && request.focusModeActive) {
         setActive(true);
         setPageData({ baseURL: request.baseURL });
+      } else if (request && request.isPause && !request.focusModeActive) {
+        setActive(false);
+        setPageData({ baseURL: '' });
       }
     });
 
