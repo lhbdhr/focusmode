@@ -1,14 +1,14 @@
 {
   "appName": {
-    "message": "Framer − minimal ToDo list",
+    "message": "Focusmode − Stay focused without conflicting yourself",
     "description": "The title of the application, displayed in the web store."
   },
   "appShortName": {
-    "message": "Framer",
+    "message": "Focusmode",
     "description": "The short_name (maximum of 12 characters recommended) is a short version of the extension's name. "
   },
   "appDesc": {
-    "message": "Clean and simple ToDo list accessible right from the page.",
+    "message": "This extension will help you make an informed decision before you visit a distracting websites.",
     "description": "The description of the application, displayed in the web store."
   },
   "placeholder": {

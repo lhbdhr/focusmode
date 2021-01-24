@@ -1,9 +1,9 @@
 {
   "version": "0.0.1",
-  "name": "framer",
+  "name": "focusmode",
   "repository": {
     "type": "git",
-    "url": "https://github.com/ElForastero/framer"
+    "url": "https://github.com/umarluqman/focusmode"
   },
   "scripts": {
     "build": "cross-env NODE_ENV=production yarn webpack -c webpack.config.js --mode production",
