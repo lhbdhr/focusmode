@@ -87,11 +87,11 @@ export default () => {
           </Item>
         ))}
       </Box>
-      <Box display="flex" mt={2} mr={2} mb={3} justifyContent="flex-end">
+      {/* <Box display="flex" mt={2} mr={2} mb={3} justifyContent="flex-end">
         <Button onClick={() => browser.runtime.sendMessage({ greeting: 'showOptionsPage' })}>
           Setting
         </Button>
-      </Box>
+      </Box> */}
     </Box>
   );
 };

@@ -2,7 +2,7 @@ import globalStyle from 'assets/styles/global';
 import { OptionsProvider } from 'context/Options';
 import { ThemeProvider } from 'context/Theme';
 import 'libs/polyfills';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import ReactDOM from 'react-dom';
 import styled, { createGlobalStyle, StyleSheetManager } from 'styled-components';
 import browser from 'webextension-polyfill';
@@ -116,11 +116,9 @@ const Flex = styled.div`
 `;
 
 const App = () => {
-  const [active, setActive] = useState(false);
   const [pageData, setPageData] = useState({ baseURL: '' });
 
-  const { active: focusModeActive } = useStore();
-  console.log({ active, focusModeActive });
+  const { active: focusModeActive, setActive } = useStore();
 
   useEffect(() => {
     browser.runtime.onMessage.addListener(function(request) {
@@ -152,27 +150,33 @@ const App = () => {
     getList();
   }, []);
 
+  const renderDialog = useMemo(() => {
+    return (
+      focusModeActive && (
+        <DialogContainer>
+          <Dialog open>
+            <Flex>
+              <FocusIcon size={24} color="#1881f2" />
+              <Heading>Focus mode is on</Heading>
+            </Flex>
+            <Description>
+              {pageData.baseURL} and other distracting sites are paused right now
+            </Description>
+            <StyledMenu>
+              <StyledButton type="button">let me have it for 5 mins</StyledButton>
+            </StyledMenu>
+          </Dialog>
+        </DialogContainer>
+      )
+    );
+  }, [focusModeActive, pageData.baseURL]);
+
   return (
     <StyleSheetManager target={styleContainer}>
       <OptionsProvider>
         <ThemeProvider>
           <GlobalStyle />
-          {active && (
-            <DialogContainer>
-              <Dialog open>
-                <Flex>
-                  <FocusIcon size={24} color="#1881f2" />
-                  <Heading>Focus mode is on</Heading>
-                </Flex>
-                <Description>
-                  {pageData.baseURL} and other distracting sites are paused right now
-                </Description>
-                <StyledMenu>
-                  <StyledButton type="button">use it for 5 minutes</StyledButton>
-                </StyledMenu>
-              </Dialog>
-            </DialogContainer>
-          )}
+          {renderDialog}
         </ThemeProvider>
       </OptionsProvider>
     </StyleSheetManager>

@@ -22,9 +22,8 @@
     }
   ],
   "icons": {
-    "16": "assets/img/icon-16x16.png",
-    "48": "assets/img/icon-48x48.png",
-    "128": "assets/img/icon-128x128.png"
+    "16": "assets/img/circle (6).png",
+    "48": "assets/img/circle (5).png"
   },
   "permissions": ["storage", "tabs"],
   "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'; connect-src ws://localhost:*/",
