@@ -47,8 +47,8 @@ export default () => {
   };
   const updateItem = payload => dispatch({ type: UPDATE_LINK, payload });
 
-  const toggle = value => {
-    setActive(value);
+  const toggle = () => {
+    setActive(!active);
   };
 
   return (
@@ -66,6 +66,9 @@ export default () => {
             <Description>Turn on to pause distracting sites</Description>
           )}
         </Box>
+        {/* <button onClick={toggle} style={{ cursor: 'pointer' }}>
+          {active ? 'on' : 'off'}
+        </button> */}
         <Switch onChange={toggle} checked={active} />
       </Box>
       <Box mb={3} mt={3}>

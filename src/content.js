@@ -2,15 +2,16 @@ import globalStyle from 'assets/styles/global';
 import { OptionsProvider } from 'context/Options';
 import { ThemeProvider } from 'context/Theme';
 import 'libs/polyfills';
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useState, useMemo, useRef } from 'react';
 import ReactDOM from 'react-dom';
 import styled, { createGlobalStyle, StyleSheetManager } from 'styled-components';
 import browser from 'webextension-polyfill';
 import { Focus as FocusIcon } from '@styled-icons/remix-line/Focus';
 import { baseURLRegex } from 'constants/regex';
-import getStubData from 'context/FocusMode/getStubData';
 import useStore from 'hooks/useStore';
 import useList from 'hooks/useList';
+import useActive from 'hooks/useActive';
+import useFocusMode from 'hooks/useFocusMode';
 
 const GlobalStyle = createGlobalStyle`
   :host {
@@ -117,65 +118,61 @@ const Flex = styled.div`
   align-items: center;
 `;
 
-const App = () => {
-  const [pageData, setPageData] = useState({ baseURL: '' });
-
-  const { active: focusModeActive, setActive, fetch } = useStore();
-
+const Blocked = () => {
   const { list } = useList();
+  const { active } = useActive();
 
-  const shouldActive = useMemo(() => {
-    const [baseURL] = window.location.href.match(baseURLRegex);
-    const pausedURL = list.map(({ url }) => {
-      const [baseURL] = url.match(baseURLRegex);
-      return baseURL;
-    });
-    const isPause = pausedURL.includes(baseURL);
-    setPageData({ baseURL });
+  console.log('content', { list, active });
+  const { isFocusModeOn, baseURL } = useFocusMode({ isActive: active, list });
+  return (
+    isFocusModeOn && (
+      <DialogContainer>
+        <Dialog open>
+          <Flex>
+            <FocusIcon size={24} color="#1881f2" />
+            <Heading>Focus mode is on</Heading>
+          </Flex>
+          <Description>{baseURL} and other distracting sites are paused right now</Description>
+          <StyledMenu>
+            <StyledButton type="button">let me have it for 5 mins</StyledButton>
+          </StyledMenu>
+        </Dialog>
+      </DialogContainer>
+    )
+  );
+};
 
-    return isPause && focusModeActive;
-  }, [list, focusModeActive, baseURLRegex]);
+const App = () => {
+  const { setActive } = useActive();
+  const { fetch } = useStore();
+
+  const onTabActivatedRef = useRef(null);
+  console.log('ref', onTabActivatedRef.current);
 
   useEffect(() => {
     browser.runtime.onMessage.addListener(function(request) {
-      if (request && request.isPause && request.focusModeActive) {
-        setActive(true);
-        setPageData({ baseURL: request.baseURL });
-      } else if (request && request.isPause && !request.focusModeActive) {
-        setActive(false);
-        setPageData({ baseURL: '' });
+      if (request) {
+        onTabActivatedRef.current = true;
+        setActive(request.isPause && request.focusModeActive);
       }
     });
-    fetch();
   }, []);
 
-  const renderDialog = useMemo(() => {
-    return (
-      shouldActive && (
-        <DialogContainer>
-          <Dialog open>
-            <Flex>
-              <FocusIcon size={24} color="#1881f2" />
-              <Heading>Focus mode is on</Heading>
-            </Flex>
-            <Description>
-              {pageData.baseURL} and other distracting sites are paused right now
-            </Description>
-            <StyledMenu>
-              <StyledButton type="button">let me have it for 5 mins</StyledButton>
-            </StyledMenu>
-          </Dialog>
-        </DialogContainer>
-      )
-    );
-  }, [shouldActive, pageData.baseURL]);
+  // useEffect(() => {
+  //   console.log('should be fetching');
+  //   if (!onTabActivatedRef.current) {
+  //     console.log('should in be fetching');
+
+  //     fetch();
+  //   }
+  // }, []);
 
   return (
     <StyleSheetManager target={styleContainer}>
       <OptionsProvider>
         <ThemeProvider>
           <GlobalStyle />
-          {renderDialog}
+          <Blocked />
         </ThemeProvider>
       </OptionsProvider>
     </StyleSheetManager>

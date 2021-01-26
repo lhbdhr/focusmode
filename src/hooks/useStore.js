@@ -46,10 +46,14 @@ const useStore = create(set => {
       set(() => ({ active }));
     },
     fetch: async () => {
+      console.log('start fetching for all');
       const { active, list } = await browser.storage.sync.get({
         active: false,
         list: getStubData(),
       });
+
+      console.log('finish fetching for all', { active, list });
+
       set({ active, list });
       return { active, list };
     },
