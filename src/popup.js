@@ -1,5 +1,5 @@
 import 'libs/polyfills';
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import ReactDOM from 'react-dom';
 import { createGlobalStyle } from 'styled-components';
 import { ThemeProvider } from 'context/Theme';
@@ -17,9 +17,11 @@ const GlobalStyle = createGlobalStyle`
 `;
 
 const Popup = () => {
+  const initRef = useRef(null);
   const { fetch, list, active } = useStore();
   useEffect(() => {
     fetch();
+    initRef.current = true;
   }, []);
 
   console.log('in parent', { list, active });
@@ -29,7 +31,7 @@ const Popup = () => {
       <ThemeProvider>
         <GlobalStyle />
         <Container>
-          <FocusMode />
+          <FocusMode shouldSync={initRef.current} />
         </Container>
       </ThemeProvider>
     </OptionsProvider>

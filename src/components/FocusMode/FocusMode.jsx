@@ -27,11 +27,11 @@ const Description = styled.p`
   margin-bottom: 18px;
 `;
 
-export default () => {
+export default ({ shouldSync }) => {
   const [url, setURL] = useState('');
 
-  const { list, dispatch } = useList();
-  const { setActive, active } = useActive();
+  const { list, dispatch } = useList({ shouldSync });
+  const { setActive, active } = useActive({ shouldSync });
 
   console.log('all in focusMode', { list, active });
 
