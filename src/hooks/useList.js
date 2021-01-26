@@ -4,7 +4,7 @@ import browser from 'webextension-polyfill';
 // import getStubData from '../context/FocusMode/getStubData';
 export const INIT = 'INIT';
 export default function useList({ shouldSync }) {
-  const { list, dispatch } = useStore();
+  const { list, dispatch, currentTabId } = useStore();
   console.log('in useList', list);
 
   // Syncing with storage after data changed
@@ -12,8 +12,14 @@ export default function useList({ shouldSync }) {
     if (shouldSync) {
       console.log('syncing in useList...');
       browser.storage.sync.set({ list });
+      if (currentTabId) {
+        browser.tabs.sendMessage(currentTabId, {
+          list,
+          id: 'onChangeList',
+        });
+      }
     }
-  }, [list, shouldSync]);
+  }, [list, shouldSync, currentTabId]);
 
   return {
     list,

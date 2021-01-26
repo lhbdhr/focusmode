@@ -122,8 +122,8 @@ const Blocked = ({ shouldSync }) => {
   const { list } = useList({ shouldSync });
   const { active } = useActive({ shouldSync });
 
-  console.log('inside content', { list, active });
   const { isFocusModeOn, baseURL } = useFocusMode({ isActive: active, list });
+  console.log({ list, active, isFocusModeOn });
   return (
     isFocusModeOn && (
       <DialogContainer>
@@ -143,15 +143,23 @@ const Blocked = ({ shouldSync }) => {
 };
 
 const App = () => {
-  const { setActive } = useActive({ shouldSync: false });
-  const { fetch } = useStore();
+  // const { setActive } = useActive({ shouldSync: false });
+  // const { dispatch } = useList({ shouldSync: false });
+  const { fetch, dispatch, setActive } = useStore();
 
   const initRef = useRef(null);
-
+  console.log('hit');
   useEffect(() => {
     browser.runtime.onMessage.addListener(function(request) {
-      if (request) {
-        setActive(request.isPause && request.focusModeActive);
+      console.log('hit 2nd');
+
+      if (request && request.id === 'onActivated') {
+        setActive(request.active);
+        dispatch({ type: 'INIT', payload: request.list });
+      } else if (request && request.id === 'onToggle') {
+        setActive(request.active);
+      } else if (request && request.id === 'onChangeList') {
+        dispatch({ type: 'INIT', payload: request.list });
       }
     });
   }, []);

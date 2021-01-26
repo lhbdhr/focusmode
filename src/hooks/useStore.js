@@ -42,6 +42,7 @@ const useStore = create(set => {
   return {
     active: false,
     list: [],
+    currentTabId: '',
     setActive: active => {
       set(() => ({ active }));
     },
@@ -56,6 +57,11 @@ const useStore = create(set => {
 
       set({ active, list });
       return { active, list };
+    },
+    getCurrentTabId: async () => {
+      const tabs = await browser.tabs.query({ active: true, currentWindow: true });
+
+      set({ currentTabId: tabs[0].id });
     },
     dispatch: ({ type, payload }) => {
       set(state => ({ list: reducer(state.list, { type, payload }) }));

@@ -7,6 +7,7 @@ import { OptionsProvider } from 'context/Options';
 import FocusMode from 'components/FocusMode';
 import Container from 'components/Container';
 import useStore from 'hooks/useStore';
+import browser from 'webextension-polyfill';
 
 const GlobalStyle = createGlobalStyle`
   body {
@@ -18,9 +19,10 @@ const GlobalStyle = createGlobalStyle`
 
 const Popup = () => {
   const initRef = useRef(null);
-  const { fetch, list, active } = useStore();
+  const { fetch, list, active, getCurrentTabId } = useStore();
   useEffect(() => {
     fetch();
+    getCurrentTabId();
     initRef.current = true;
   }, []);
 
