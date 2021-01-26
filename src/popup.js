@@ -24,7 +24,7 @@ const Popup = () => {
     initRef.current = true;
   }, []);
 
-  console.log('in parent', { list, active });
+  console.log('inside popup', { list, active });
 
   return (
     <OptionsProvider>

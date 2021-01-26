@@ -118,11 +118,11 @@ const Flex = styled.div`
   align-items: center;
 `;
 
-const Blocked = () => {
-  const { list } = useList();
-  const { active } = useActive();
+const Blocked = ({ shouldSync }) => {
+  const { list } = useList({ shouldSync });
+  const { active } = useActive({ shouldSync });
 
-  console.log('content', { list, active });
+  console.log('inside content', { list, active });
   const { isFocusModeOn, baseURL } = useFocusMode({ isActive: active, list });
   return (
     isFocusModeOn && (
@@ -143,36 +143,30 @@ const Blocked = () => {
 };
 
 const App = () => {
-  const { setActive } = useActive();
+  // const { setActive } = useActive();
   const { fetch } = useStore();
 
-  const onTabActivatedRef = useRef(null);
-  console.log('ref', onTabActivatedRef.current);
-
-  useEffect(() => {
-    browser.runtime.onMessage.addListener(function(request) {
-      if (request) {
-        onTabActivatedRef.current = true;
-        setActive(request.isPause && request.focusModeActive);
-      }
-    });
-  }, []);
+  const initRef = useRef(null);
 
   // useEffect(() => {
-  //   console.log('should be fetching');
-  //   if (!onTabActivatedRef.current) {
-  //     console.log('should in be fetching');
-
-  //     fetch();
-  //   }
+  //   browser.runtime.onMessage.addListener(function(request) {
+  //     if (request) {
+  //       setActive(request.isPause && request.focusModeActive);
+  //     }
+  //   });
   // }, []);
+
+  useEffect(() => {
+    fetch();
+    initRef.current = true;
+  }, []);
 
   return (
     <StyleSheetManager target={styleContainer}>
       <OptionsProvider>
         <ThemeProvider>
           <GlobalStyle />
-          <Blocked />
+          <Blocked shouldSync={initRef.current} />
         </ThemeProvider>
       </OptionsProvider>
     </StyleSheetManager>
