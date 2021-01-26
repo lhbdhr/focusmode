@@ -143,22 +143,23 @@ const Blocked = ({ shouldSync }) => {
 };
 
 const App = () => {
-  // const { setActive } = useActive({ shouldSync: false });
-  // const { dispatch } = useList({ shouldSync: false });
   const { fetch, dispatch, setActive } = useStore();
 
   const initRef = useRef(null);
-  console.log('hit');
+
   useEffect(() => {
     browser.runtime.onMessage.addListener(function(request) {
-      console.log('hit 2nd');
-
       if (request && request.id === 'onActivated') {
+        console.log('onActivated');
         setActive(request.active);
+
         dispatch({ type: 'INIT', payload: request.list });
       } else if (request && request.id === 'onToggle') {
+        console.log('onToggle', { active: request.active });
         setActive(request.active);
       } else if (request && request.id === 'onChangeList') {
+        console.log('onChangeList');
+
         dispatch({ type: 'INIT', payload: request.list });
       }
     });

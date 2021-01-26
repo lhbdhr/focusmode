@@ -19,7 +19,7 @@ export default function useActive({ shouldSync = false }) {
       }
       console.log({ currentTabId });
     }
-  }, [active, shouldSync]);
+  }, [active, shouldSync, currentTabId]);
 
   return {
     active,
