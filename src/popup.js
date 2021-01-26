@@ -1,13 +1,14 @@
 import 'libs/polyfills';
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, Suspense } from 'react';
 import ReactDOM from 'react-dom';
 import { createGlobalStyle } from 'styled-components';
 import { ThemeProvider } from 'context/Theme';
-import { OptionsProvider } from 'context/Options';
-import FocusMode from 'components/FocusMode';
 import Container from 'components/Container';
 import useStore from 'hooks/useStore';
+import lazy from 'preact-lazy';
 import browser from 'webextension-polyfill';
+
+const FocusMode = lazy(() => import('components/FocusMode'));
 
 const GlobalStyle = createGlobalStyle`
   body {
@@ -29,14 +30,14 @@ const Popup = () => {
   console.log('inside popup', { list, active });
 
   return (
-    <OptionsProvider>
-      <ThemeProvider>
-        <GlobalStyle />
-        <Container>
+    <ThemeProvider>
+      <GlobalStyle />
+      <Container>
+        <Suspense fallback={<div>loading...</div>}>
           <FocusMode shouldSync={initRef.current} />
-        </Container>
-      </ThemeProvider>
-    </OptionsProvider>
+        </Suspense>
+      </Container>
+    </ThemeProvider>
   );
 };
 

@@ -1,5 +1,4 @@
 import globalStyle from 'assets/styles/global';
-import { OptionsProvider } from 'context/Options';
 import { ThemeProvider } from 'context/Theme';
 import 'libs/polyfills';
 import React, { useEffect, useState, useMemo, useRef } from 'react';
@@ -55,11 +54,10 @@ const Dialog = styled.dialog`
   position: absolute;
   left: 0%;
   top: 32%;
-  width: 300px;
-  height: 132px;
+  width: 320px;
+  height: 150px;
   border-radius: 4px;
   z-index: 99999999999999999999999999;
-
   padding-left: 20px;
   padding-right: 20px;
   border: none;
@@ -74,7 +72,7 @@ const StyledMenu = styled.menu`
 `;
 
 const StyledButton = styled.button`
-  font-size: 12px;
+  font-size: 40px;
   cursor: pointer;
   appearance: none;
   transition: all 250ms;
@@ -83,14 +81,13 @@ const StyledButton = styled.button`
   white-space: nowrap;
   vertical-align: middle;
   outline: none;
-  width: auto;
+  width: 50px;
+  height: 50px;
   line-height: 1.2;
-  border-radius: 0.375rem;
+  border-radius: 50%;
   font-weight: 500;
-  height: 2.5rem;
+
   min-width: 2.5rem;
-  padding-left: 12px;
-  padding-right: 12px;
   color: #1881f2;
   background: transparent;
   border: none;
@@ -120,7 +117,7 @@ const Flex = styled.div`
 
 const Blocked = ({ shouldSync }) => {
   const { list } = useList({ shouldSync });
-  const { active } = useActive({ shouldSync });
+  const { active, setActive } = useActive({ shouldSync });
 
   const { isFocusModeOn, baseURL } = useFocusMode({ isActive: active, list });
   console.log({ list, active, isFocusModeOn });
@@ -134,7 +131,9 @@ const Blocked = ({ shouldSync }) => {
           </Flex>
           <Description>{baseURL} and other distracting sites are paused right now</Description>
           <StyledMenu>
-            <StyledButton type="button">let me have it for 5 mins</StyledButton>
+            <StyledButton type="button" onClick={() => setActive(false)}>
+              🙄
+            </StyledButton>
           </StyledMenu>
         </Dialog>
       </DialogContainer>
@@ -172,12 +171,10 @@ const App = () => {
 
   return (
     <StyleSheetManager target={styleContainer}>
-      <OptionsProvider>
-        <ThemeProvider>
-          <GlobalStyle />
-          <Blocked shouldSync={initRef.current} />
-        </ThemeProvider>
-      </OptionsProvider>
+      <ThemeProvider>
+        <GlobalStyle />
+        <Blocked shouldSync={initRef.current} />
+      </ThemeProvider>
     </StyleSheetManager>
   );
 };
