@@ -143,18 +143,18 @@ const Blocked = ({ shouldSync }) => {
 };
 
 const App = () => {
-  // const { setActive } = useActive();
+  const { setActive } = useActive({ shouldSync: false });
   const { fetch } = useStore();
 
   const initRef = useRef(null);
 
-  // useEffect(() => {
-  //   browser.runtime.onMessage.addListener(function(request) {
-  //     if (request) {
-  //       setActive(request.isPause && request.focusModeActive);
-  //     }
-  //   });
-  // }, []);
+  useEffect(() => {
+    browser.runtime.onMessage.addListener(function(request) {
+      if (request) {
+        setActive(request.isPause && request.focusModeActive);
+      }
+    });
+  }, []);
 
   useEffect(() => {
     fetch();

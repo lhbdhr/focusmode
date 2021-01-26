@@ -32,20 +32,3 @@ chrome.tabs.onActivated.addListener(function(activeInfo) {
     }
   });
 });
-
-// browser.tabs.onUpdated.addListener(async function(tabId, changeInfo, tab) {
-//   if (changeInfo.url) {
-//     const { list } = await browser.storage.sync.get();
-//     const hostname = new URL(changeInfo.url).host;
-//     const blockedHostname = list.map(({ url }) => url);
-//     const isBlocked = blockedHostname.includes(hostname);
-
-//     if (isBlocked) {
-//       browser.tabs.sendMessage(tabId, {
-//         message: hostname,
-//         tabId,
-//         url: changeInfo.url,
-//       });
-//     }
-//   }
-// });
