@@ -8,7 +8,9 @@ import styled, { createGlobalStyle, StyleSheetManager } from 'styled-components'
 import browser from 'webextension-polyfill';
 import { Focus as FocusIcon } from '@styled-icons/remix-line/Focus';
 import { baseURLRegex } from 'constants/regex';
+import getStubData from 'context/FocusMode/getStubData';
 import useStore from 'hooks/useStore';
+import useList from 'hooks/useList';
 
 const GlobalStyle = createGlobalStyle`
   :host {
@@ -118,7 +120,21 @@ const Flex = styled.div`
 const App = () => {
   const [pageData, setPageData] = useState({ baseURL: '' });
 
-  const { active: focusModeActive, setActive } = useStore();
+  const { active: focusModeActive, setActive, fetch } = useStore();
+
+  const { list } = useList();
+
+  const shouldActive = useMemo(() => {
+    const [baseURL] = window.location.href.match(baseURLRegex);
+    const pausedURL = list.map(({ url }) => {
+      const [baseURL] = url.match(baseURLRegex);
+      return baseURL;
+    });
+    const isPause = pausedURL.includes(baseURL);
+    setPageData({ baseURL });
+
+    return isPause && focusModeActive;
+  }, [list, focusModeActive, baseURLRegex]);
 
   useEffect(() => {
     browser.runtime.onMessage.addListener(function(request) {
@@ -130,29 +146,12 @@ const App = () => {
         setPageData({ baseURL: '' });
       }
     });
-
-    const getList = async () => {
-      const { list, active: focusModeActive } = await browser.storage.sync.get();
-
-      const [baseURL] = window.location.href.match(baseURLRegex);
-      const pausedURL = list.map(({ url }) => {
-        const [baseURL] = url.match(baseURLRegex);
-        return baseURL;
-      });
-
-      const isPause = pausedURL.includes(baseURL);
-
-      if (isPause && focusModeActive) {
-        setActive(true);
-        setPageData({ baseURL });
-      }
-    };
-    getList();
+    fetch();
   }, []);
 
   const renderDialog = useMemo(() => {
     return (
-      focusModeActive && (
+      shouldActive && (
         <DialogContainer>
           <Dialog open>
             <Flex>
@@ -169,7 +168,7 @@ const App = () => {
         </DialogContainer>
       )
     );
-  }, [focusModeActive, pageData.baseURL]);
+  }, [shouldActive, pageData.baseURL]);
 
   return (
     <StyleSheetManager target={styleContainer}>

@@ -4,7 +4,6 @@ import ReactDOM from 'react-dom';
 import { createGlobalStyle } from 'styled-components';
 import { ThemeProvider } from 'context/Theme';
 import { OptionsProvider } from 'context/Options';
-import { LinkProvider } from 'context/FocusMode';
 import FocusMode from 'components/FocusMode';
 import Container from 'components/Container';
 import useStore from 'hooks/useStore';
@@ -18,20 +17,20 @@ const GlobalStyle = createGlobalStyle`
 `;
 
 const Popup = () => {
+  const { fetch, list, active } = useStore();
   useEffect(() => {
-    const { fetch } = useStore();
     fetch();
   }, []);
+
+  console.log('in parent', { list, active });
 
   return (
     <OptionsProvider>
       <ThemeProvider>
         <GlobalStyle />
-        <LinkProvider>
-          <Container>
-            <FocusMode />
-          </Container>
-        </LinkProvider>
+        <Container>
+          <FocusMode />
+        </Container>
       </ThemeProvider>
     </OptionsProvider>
   );

@@ -1,19 +1,18 @@
 // import TrashIcon from 'assets/icons/trash.svg';
+import { Trash as TrashIcon } from '@styled-icons/feather/Trash';
+import { Focus as FocusIcon } from '@styled-icons/remix-line/Focus';
 import Box from 'components/Box';
-import Button from 'components/Button';
 import Control from 'components/Control';
 import DateLabel from 'components/DateLabel';
 import Input from 'components/Input';
-import { ADD_LINK, LinkContext, REMOVE_LINK, UPDATE_LINK } from 'context/FocusMode';
-import React, { useContext, useState } from 'react';
-import browser from 'webextension-polyfill';
+import Switch from 'components/Switch';
+import { ADD_LINK, REMOVE_LINK, UPDATE_LINK } from 'context/FocusMode';
+import useActive from 'hooks/useActive';
+import useList from 'hooks/useList';
+import React, { useState } from 'react';
+import styled from 'styled-components';
 import Item from './Item';
 import Text from './Text';
-import Switch from 'components/Switch';
-import styled from 'styled-components';
-import { Focus as FocusIcon } from '@styled-icons/remix-line/Focus';
-import { Trash as TrashIcon } from '@styled-icons/feather/Trash';
-import useStore from 'hooks/useStore';
 
 const Heading = styled.h1`
   font-size: 16px;
@@ -30,7 +29,11 @@ const Description = styled.p`
 
 export default () => {
   const [url, setURL] = useState('');
-  const [items, dispatch] = useContext(LinkContext);
+
+  const { list, dispatch } = useList();
+  const { setActive, active } = useActive();
+
+  console.log('all in focusMode', { list, active });
 
   const handleInputChange = ({ target: { value } }) => setURL(value);
 
@@ -44,7 +47,6 @@ export default () => {
   };
   const updateItem = payload => dispatch({ type: UPDATE_LINK, payload });
 
-  const { setActive, active } = useStore(state => state);
   const toggle = value => {
     setActive(value);
   };
@@ -78,7 +80,7 @@ export default () => {
         />
       </Box>
       <Box overflowY="auto" flexGrow="1">
-        {items.map(({ id, url }) => (
+        {list.map(({ id, url }) => (
           <Item key={id}>
             <Text id={id} title={url} value={url} update={updateItem} />
             <Control onClick={removeItem(id)}>
@@ -87,11 +89,6 @@ export default () => {
           </Item>
         ))}
       </Box>
-      {/* <Box display="flex" mt={2} mr={2} mb={3} justifyContent="flex-end">
-        <Button onClick={() => browser.runtime.sendMessage({ greeting: 'showOptionsPage' })}>
-          Setting
-        </Button>
-      </Box> */}
     </Box>
   );
 };
