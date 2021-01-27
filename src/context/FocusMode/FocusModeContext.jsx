@@ -47,13 +47,13 @@ const LinkProvider = memo(({ children }) => {
   // Sync with storage
   useEffect(() => {
     if (initRef.current) {
-      browser.storage.sync.set({ list: state });
+      browser.storage.local.set({ list: state });
     }
   }, [state]);
 
   // Listen to storage change and update the list
   useEffect(() => {
-    browser.storage.onChanged.addListener(changes => {
+    browser.storage.local.onChanged.addListener(changes => {
       if (changes.list) {
         dispatch({ type: INIT, payload: changes.list.newValue });
       }
@@ -62,7 +62,7 @@ const LinkProvider = memo(({ children }) => {
 
   // Initialize the list with saved items or with initial data
   useEffect(async () => {
-    const { list } = await browser.storage.sync.get({ list: getStubData() });
+    const { list } = await browser.storage.local.get({ list: getStubData() });
     dispatch({ type: INIT, payload: list });
     initRef.current = true;
   }, []);

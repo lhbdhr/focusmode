@@ -11,7 +11,7 @@ export default function useList({ shouldSync }) {
   useEffect(() => {
     if (shouldSync) {
       console.log('syncing in useList...');
-      browser.storage.sync.set({ list });
+      browser.storage.local.set({ list });
       if (currentTabId) {
         browser.tabs.sendMessage(currentTabId, {
           list,

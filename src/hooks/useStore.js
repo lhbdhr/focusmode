@@ -1,6 +1,7 @@
 import browser from 'webextension-polyfill';
 import create from 'zustand';
 import getStubData from '../context/FocusMode/getStubData';
+import dayjs from 'dayjs';
 
 export const ADD_LINK = 'ADD_LINK';
 export const REMOVE_LINK = 'REMOVE_LINK';
@@ -43,20 +44,33 @@ const useStore = create(set => {
     active: false,
     list: [],
     currentTabId: '',
+    breakAt: null,
+    interval: 5,
     setActive: active => {
       set(() => ({ active }));
     },
+    setBreakAt: breakAt => {
+      set(() => ({ breakAt }));
+    },
+    resetBreakAt: () => {
+      set(() => ({ breakAt: undefined }));
+    },
+    setInterval: interval => {
+      set(() => ({ interval: interval * 60000 }));
+    },
     fetch: async () => {
       console.log('start fetching for all');
-      const { active, list } = await browser.storage.sync.get({
+      const { active, list, breakAt, interval } = await browser.storage.local.get({
         active: false,
         list: getStubData(),
+        breakAt: undefined,
+        interval: 0.5,
       });
 
-      console.log('finish fetching for all', { active, list });
+      console.log('finish fetching for all', { active, list, breakAt, interval });
 
-      set({ active, list });
-      return { active, list };
+      set({ active, list, interval, breakAt: dayjs(breakAt).toJSON() });
+      return { active, list, interval, breakAt };
     },
     getCurrentTabId: async () => {
       const tabs = await browser.tabs.query({ active: true, currentWindow: true });

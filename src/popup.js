@@ -19,14 +19,14 @@ const GlobalStyle = createGlobalStyle`
 
 const Popup = () => {
   const initRef = useRef(null);
-  const { fetch, list, active, getCurrentTabId } = useStore();
+  const { fetch, list, active, getCurrentTabId, breakAt } = useStore();
   useEffect(() => {
     fetch();
     getCurrentTabId();
     initRef.current = true;
   }, []);
 
-  console.log('inside popup', { list, active });
+  console.log('inside popup', { list, active, breakAt });
 
   return (
     <ThemeProvider>

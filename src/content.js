@@ -1,15 +1,15 @@
 import globalStyle from 'assets/styles/global';
 import { ThemeProvider } from 'context/Theme';
 import 'libs/polyfills';
-import React, { useEffect, useState, useMemo, useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import ReactDOM from 'react-dom';
 import styled, { createGlobalStyle, StyleSheetManager } from 'styled-components';
 import browser from 'webextension-polyfill';
 import { Focus as FocusIcon } from '@styled-icons/remix-line/Focus';
-import { baseURLRegex } from 'constants/regex';
 import useStore from 'hooks/useStore';
 import useList from 'hooks/useList';
 import useActive from 'hooks/useActive';
+import useBreak from 'hooks/useBreak';
 import useFocusMode from 'hooks/useFocusMode';
 
 const GlobalStyle = createGlobalStyle`
@@ -72,7 +72,7 @@ const StyledMenu = styled.menu`
 `;
 
 const StyledButton = styled.button`
-  font-size: 40px;
+  font-size: 20px;
   cursor: pointer;
   appearance: none;
   transition: all 250ms;
@@ -116,10 +116,19 @@ const Flex = styled.div`
 
 const Blocked = ({ shouldSync }) => {
   const { list } = useList({ shouldSync });
-  const { active, setActive } = useActive({ shouldSync });
+  const { active } = useActive({ shouldSync });
+  const { setBreakAt, breakAt, isBreak } = useBreak({ shouldSync });
 
-  const { isFocusModeOn, baseURL } = useFocusMode({ isActive: active, list });
-  console.log({ list, active, isFocusModeOn });
+  const { isFocusModeOn, baseURL } = useFocusMode({ isActive: active, list, isBreak, breakAt });
+
+  const now = new Date().getTime();
+  if (breakAt) {
+    console.log('break is set', { list, active, isFocusModeOn, breakAt, now, isBreak });
+  }
+
+  const handleBreak = () => {
+    setBreakAt(new Date());
+  };
   return (
     isFocusModeOn && (
       <DialogContainer>
@@ -130,8 +139,8 @@ const Blocked = ({ shouldSync }) => {
           </Flex>
           <Description>{baseURL} and other distracting sites are paused right now</Description>
           <StyledMenu>
-            <StyledButton type="button" onClick={() => setActive(false)}>
-              🙄
+            <StyledButton type="button" onClick={handleBreak}>
+              take a 5 mins break
             </StyledButton>
           </StyledMenu>
         </Dialog>
@@ -141,16 +150,17 @@ const Blocked = ({ shouldSync }) => {
 };
 
 const App = () => {
-  const { fetch, dispatch, setActive } = useStore();
+  const { fetch, dispatch, setActive, setBreakAt } = useStore();
 
   const initRef = useRef(null);
 
   useEffect(() => {
     browser.runtime.onMessage.addListener(function(request) {
+      console.log('req', request);
       if (request && request.id === 'onActivated') {
         console.log('onActivated');
         setActive(request.active);
-
+        setBreakAt(request.breakAt);
         dispatch({ type: 'INIT', payload: request.list });
       } else if (request && request.id === 'onToggle') {
         console.log('onToggle', { active: request.active });

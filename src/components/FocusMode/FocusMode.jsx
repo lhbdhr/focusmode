@@ -9,6 +9,7 @@ import Switch from 'components/Switch';
 import { ADD_LINK, REMOVE_LINK, UPDATE_LINK } from 'context/FocusMode';
 import useActive from 'hooks/useActive';
 import useList from 'hooks/useList';
+import useBreak from 'hooks/useBreak';
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import Item from './Item';
@@ -32,8 +33,9 @@ export default ({ shouldSync }) => {
 
   const { list, dispatch } = useList({ shouldSync });
   const { setActive, active } = useActive({ shouldSync });
+  const { breakAt, resetBreak, isBreak } = useBreak({ shouldSync });
 
-  console.log('all in focusMode', { list, active });
+  console.log('all in focusMode', { list, active, breakAt, isBreak });
 
   const handleInputChange = ({ target: { value } }) => setURL(value);
 
@@ -47,7 +49,11 @@ export default ({ shouldSync }) => {
   };
   const updateItem = payload => dispatch({ type: UPDATE_LINK, payload });
 
-  const toggle = () => {
+  const toggle = e => {
+    // const value = e.target.checked;
+    // if (!value) {
+    //   resetBreak();
+    // }
     setActive(!active);
   };
 
@@ -69,6 +75,7 @@ export default ({ shouldSync }) => {
 
         <Switch onChange={toggle} checked={active} />
       </Box>
+      {isBreak && <p>You are in a break</p>}
       <Box mb={3} mt={3}>
         <DateLabel>OPTIONS</DateLabel>
       </Box>
