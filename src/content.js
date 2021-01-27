@@ -66,7 +66,7 @@ const Dialog = styled.dialog`
 const StyledMenu = styled.menu`
   display: flex;
   width: 100%;
-  justify-content: space-between;
+  justify-content: flex-end;
   align-items: center;
   padding: 0;
 `;
@@ -83,11 +83,10 @@ const StyledButton = styled.button`
   outline: none;
   width: 50px;
   height: 50px;
-  line-height: 1.2;
   border-radius: 50%;
   font-weight: 500;
-
-  min-width: 2.5rem;
+  display: flex;
+  place-items: center;
   color: #1881f2;
   background: transparent;
   border: none;
