@@ -53,7 +53,11 @@ const useStore = create(set => {
       set(() => ({ breakAt }));
     },
     resetBreakAt: () => {
-      set(() => ({ breakAt: undefined }));
+      set(() => ({
+        breakAt: dayjs()
+          .subtract(1, 'day')
+          .toJSON(),
+      }));
     },
     setInterval: interval => {
       set(() => ({ interval: interval * 60000 }));
@@ -63,7 +67,9 @@ const useStore = create(set => {
       const { active, list, breakAt, interval } = await browser.storage.local.get({
         active: false,
         list: getStubData(),
-        breakAt: undefined,
+        breakAt: dayjs()
+          .subtract(1, 'day')
+          .toJSON(),
         interval: 0.5,
       });
 

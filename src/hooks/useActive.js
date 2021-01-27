@@ -3,7 +3,7 @@ import { useEffect } from 'react';
 import browser from 'webextension-polyfill';
 
 export default function useActive({ shouldSync = false }) {
-  const { active, setActive, currentTabId } = useStore();
+  const { active, setActive, currentTabId, resetBreakAt } = useStore();
   console.log('in useActive', { active });
 
   // Syncing with storage after data changed
@@ -11,6 +11,9 @@ export default function useActive({ shouldSync = false }) {
     if (shouldSync) {
       console.log('syncing in useActive...');
       browser.storage.local.set({ active });
+      if (!active) {
+        resetBreakAt();
+      }
       if (currentTabId) {
         browser.tabs.sendMessage(currentTabId, {
           active,

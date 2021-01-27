@@ -50,10 +50,6 @@ export default ({ shouldSync }) => {
   const updateItem = payload => dispatch({ type: UPDATE_LINK, payload });
 
   const toggle = e => {
-    // const value = e.target.checked;
-    // if (!value) {
-    //   resetBreak();
-    // }
     setActive(!active);
   };
 
