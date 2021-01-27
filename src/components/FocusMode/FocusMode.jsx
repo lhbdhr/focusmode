@@ -66,10 +66,8 @@ export default ({ shouldSync }) => {
             <Description>Turn on to pause distracting sites</Description>
           )}
         </Box>
-        <button onClick={toggle} style={{ cursor: 'pointer' }}>
-          toggle
-        </button>
-        {/* <Switch onChange={toggle} checked={active} /> */}
+
+        <Switch onChange={toggle} checked={active} />
       </Box>
       <Box mb={3} mt={3}>
         <DateLabel>OPTIONS</DateLabel>
