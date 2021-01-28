@@ -140,6 +140,9 @@ const App = () => {
         console.log('onChangeList');
 
         dispatch({ type: 'INIT', payload: request.list });
+      } else if (request && request.id === 'onBreak') {
+        console.log('onBreak', { breakAt: request.breakAt });
+        setBreakAt(request.breakAt);
       }
     });
   }, []);

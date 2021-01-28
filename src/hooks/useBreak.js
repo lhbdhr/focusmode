@@ -6,7 +6,7 @@ import relativeTime from 'dayjs/plugin/relativeTime';
 dayjs.extend(relativeTime);
 
 export default function useBreak({ shouldSync = false }) {
-  const { setBreakAt, breakAt: breakAtJSON, interval, resetBreakAt } = useStore();
+  const { setBreakAt, breakAt: breakAtJSON, interval, resetBreakAt, currentTabId } = useStore();
 
   const breakAt = dayjs(breakAtJSON).toDate();
 
@@ -15,8 +15,14 @@ export default function useBreak({ shouldSync = false }) {
     if (shouldSync) {
       console.log('syncing in useBreak...');
       browser.storage.local.set({ breakAt: dayjs(breakAt).toJSON() });
+      if (currentTabId) {
+        browser.tabs.sendMessage(currentTabId, {
+          breakAt,
+          id: 'onBreak',
+        });
+      }
     }
-  }, [shouldSync, breakAt]);
+  }, [shouldSync, breakAt, currentTabId]);
 
   const now = new Date().getTime();
 
