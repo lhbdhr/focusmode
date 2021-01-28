@@ -125,7 +125,7 @@ export default ({ shouldSync }) => {
           onChange={handleInputChange}
         />
       </Box>
-      <Box overflowY="auto" flexGrow="1">
+      <Box overflowY="auto" flexGrow="1" mb={4}>
         {list.map(({ id, url }) => (
           <Item key={id}>
             <Text id={id} title={url} value={url} update={updateItem} />
