@@ -33,7 +33,7 @@ export default ({ shouldSync }) => {
 
   const { list, dispatch } = useList({ shouldSync });
   const { setActive, active } = useActive({ shouldSync });
-  const { breakAt, resetBreak, isBreak } = useBreak({ shouldSync });
+  const { breakAt, isBreak } = useBreak({ shouldSync });
 
   console.log('all in focusMode', { list, active, breakAt, isBreak });
 
@@ -49,7 +49,7 @@ export default ({ shouldSync }) => {
   };
   const updateItem = payload => dispatch({ type: UPDATE_LINK, payload });
 
-  const toggle = e => {
+  const toggle = () => {
     setActive(!active);
   };
 
