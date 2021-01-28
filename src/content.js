@@ -15,53 +15,48 @@ import BreakButton from 'components/BreakButton';
 
 const GlobalStyle = createGlobalStyle`
   :host {
-    all: initial;
+    all: inherit;
     ${globalStyle}
   }
 `;
 
 const root = document.createElement('div');
 const shadow = root.attachShadow({ mode: 'open' });
+shadow.resetStyleInheritance = true;
 
-const styleContainer = document.createElement('div');
 const appContainer = document.createElement('div');
 
-shadow.appendChild(styleContainer);
 shadow.appendChild(appContainer);
 
-document.body.appendChild(root);
+document.documentElement.appendChild(root);
 
-const DialogContainer = styled.div`
+const Div = styled.div`
+  background: white;
+  position: absolute;
+  top: 200px;
+  width: 320px;
+  min-height: 104px;
+  border-radius: 4px;
+  padding: 20px;
+  border: none;
+`;
+
+const Dialog = styled.dialog`
   position: fixed;
+  z-index: 99999999999;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  visibility: visible;
-  &:before {
-    content: '';
-    background: rgba(0, 0, 0, 0.8);
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    z-index: 999999999999999999999999999;
-  }
-`;
-
-const Dialog = styled.dialog`
-  background: white;
-  position: absolute;
-  left: 0%;
-  top: 32%;
-  width: 320px;
-  min-height: 104px;
-  border-radius: 4px;
-  z-index: 99999999999999999999999999;
-  padding-left: 20px;
-  padding-right: 20px;
-  border: none;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.8);
+  /* ::backdrop {
+    background: rgba(0, 0, 0, 0.1);
+  } */
 `;
 
 const StyledMenu = styled.div`
@@ -107,8 +102,8 @@ const Blocked = ({ shouldSync }) => {
   };
   return (
     isFocusModeOn && (
-      <DialogContainer>
-        <Dialog open>
+      <Dialog open>
+        <Div>
           <Flex>
             <FocusIcon size={24} color="#1881f2" />
             <Heading>Focus mode is ON</Heading>
@@ -119,8 +114,8 @@ const Blocked = ({ shouldSync }) => {
               take a {interval} mins break
             </BreakButton>
           </StyledMenu>
-        </Dialog>
-      </DialogContainer>
+        </Div>
+      </Dialog>
     )
   );
 };
@@ -155,7 +150,7 @@ const App = () => {
   }, []);
 
   return (
-    <StyleSheetManager target={styleContainer}>
+    <StyleSheetManager target={appContainer}>
       <ThemeProvider>
         <GlobalStyle />
         <Blocked shouldSync={initRef.current} />
