@@ -45,7 +45,7 @@ const useStore = create(set => {
     list: [],
     currentTabId: '',
     breakAt: null,
-    interval: 5,
+    interval: 0.5,
     setActive: active => {
       set(() => ({ active }));
     },

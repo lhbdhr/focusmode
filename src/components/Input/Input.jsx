@@ -20,6 +20,7 @@ const BaseInput = styled.input`
 
   :focus {
     border: 2px solid #1881f2;
+    background-color: white;
 
     outline: none;
   }

@@ -14,6 +14,7 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import Item from './Item';
 import Text from './Text';
+import BreakButton from 'components/BreakButton';
 
 const Heading = styled.h1`
   font-size: 16px;
@@ -26,6 +27,7 @@ const Description = styled.p`
   color: ${props => props.theme.font.secondary};
   margin-top: 0;
   margin-bottom: 18px;
+  line-height: 1.8;
 `;
 
 export default ({ shouldSync }) => {
@@ -33,9 +35,11 @@ export default ({ shouldSync }) => {
 
   const { list, dispatch } = useList({ shouldSync });
   const { setActive, active } = useActive({ shouldSync });
-  const { breakAt, isBreak } = useBreak({ shouldSync });
+  const { breakAt, isBreak, resetBreakAt, interval, endTime, remainingTime } = useBreak({
+    shouldSync,
+  });
 
-  console.log('all in focusMode', { list, active, breakAt, isBreak });
+  console.log('all in focusMode', { list, active, breakAt, isBreak, interval });
 
   const handleInputChange = ({ target: { value } }) => setURL(value);
 
@@ -53,25 +57,63 @@ export default ({ shouldSync }) => {
     setActive(!active);
   };
 
+  // const handleBreak = () => {
+  //   setBreakAt(new Date());
+  // };
+
+  const handleResume = () => {
+    resetBreakAt();
+  };
   return (
     <Box display="flex" flexDirection="column" height="420px">
       <Box display="flex" justifyContent="space-between">
-        <Box>
-          <Box display="flex" alignItems="center" mb={3}>
-            <FocusIcon size={24} color="#1881f2" />{' '}
-            <Heading>Focus mode is {active ? 'ON' : 'OFF'}</Heading>
+        <Box width="100%">
+          <Box
+            display="flex"
+            alignItems="center"
+            mb={3}
+            width="100%"
+            justifyContent="space-between"
+          >
+            <Box display="flext" alignItems="center">
+              <FocusIcon size={24} color="#1881f2" />{' '}
+              <Heading>
+                {active
+                  ? isBreak
+                    ? "You're on a break"
+                    : 'Focus mode is ON'
+                  : 'Focus mode is OFF'}
+              </Heading>
+            </Box>
+            {!isBreak && <Switch onChange={toggle} checked={active} />}
           </Box>
 
           {active ? (
-            <Description>Distracting sites are pause</Description>
+            isBreak ? (
+              <Description>Focus mode will resume {remainingTime}</Description>
+            ) : (
+              <Description>Distracting sites are pause</Description>
+            )
           ) : (
             <Description>Turn on to pause distracting sites</Description>
           )}
+          {isBreak && (
+            // <Box width="100%" justifyContent="flex-end" display="flex">
+            <BreakButton onClick={handleResume} fontSize="12px">
+              Resume now
+            </BreakButton>
+            // </Box>
+          )}
         </Box>
-
-        <Switch onChange={toggle} checked={active} />
       </Box>
-      {isBreak && <p>You are in a break</p>}
+      {/* <Box display="flex">
+        {active && (
+          <BreakButton onClick={handleBreak} fontSize="12px">
+            Take a break for {interval} minutes
+          </BreakButton>
+        )}
+      </Box> */}
+
       <Box mb={3} mt={3}>
         <DateLabel>OPTIONS</DateLabel>
       </Box>

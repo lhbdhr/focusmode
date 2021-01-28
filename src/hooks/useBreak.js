@@ -2,9 +2,11 @@ import useStore from './useStore';
 import { useEffect, useMemo } from 'react';
 import browser from 'webextension-polyfill';
 import dayjs from 'dayjs';
+import relativeTime from 'dayjs/plugin/relativeTime';
+dayjs.extend(relativeTime);
 
 export default function useBreak({ shouldSync = false }) {
-  const { setBreakAt, breakAt: breakAtJSON, interval, resetBreak } = useStore();
+  const { setBreakAt, breakAt: breakAtJSON, interval, resetBreakAt } = useStore();
 
   const breakAt = dayjs(breakAtJSON).toDate();
 
@@ -25,12 +27,31 @@ export default function useBreak({ shouldSync = false }) {
     return false;
   }, [now, breakAt, interval]);
 
+  const endTime = useMemo(() => {
+    if (breakAt) {
+      return dayjs(breakAt)
+        .add(interval, 'minute')
+        .format('h:mma');
+    }
+  }, [breakAt, interval]);
+
+  const remainingTime = useMemo(() => {
+    if (breakAt) {
+      return dayjs(breakAt)
+        .add(interval, 'minute')
+        .fromNow();
+    }
+  }, [breakAt, interval]);
+
   console.log('in useBreak', { isBreak });
 
   return {
     setBreakAt,
     breakAt,
     isBreak,
-    resetBreak,
+    resetBreakAt,
+    interval,
+    endTime,
+    remainingTime,
   };
 }

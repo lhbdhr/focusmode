@@ -11,6 +11,7 @@ import useList from 'hooks/useList';
 import useActive from 'hooks/useActive';
 import useBreak from 'hooks/useBreak';
 import useFocusMode from 'hooks/useFocusMode';
+import BreakButton from 'components/BreakButton';
 
 const GlobalStyle = createGlobalStyle`
   :host {
@@ -55,7 +56,7 @@ const Dialog = styled.dialog`
   left: 0%;
   top: 32%;
   width: 320px;
-  height: 150px;
+  min-height: 104px;
   border-radius: 4px;
   z-index: 99999999999999999999999999;
   padding-left: 20px;
@@ -63,37 +64,12 @@ const Dialog = styled.dialog`
   border: none;
 `;
 
-const StyledMenu = styled.menu`
+const StyledMenu = styled.div`
   display: flex;
   width: 100%;
-  justify-content: flex-end;
-  align-items: center;
-  padding: 0;
-`;
+  justify-content: flex-start;
 
-const StyledButton = styled.button`
-  font-size: 20px;
-  cursor: pointer;
-  appearance: none;
-  transition: all 250ms;
-  user-select: none;
-  position: relative;
-  white-space: nowrap;
-  vertical-align: middle;
-  outline: none;
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  font-weight: 500;
-  display: flex;
-  place-items: center;
-  color: #1881f2;
-  background: transparent;
-  border: none;
-  text-transform: uppercase;
-  &:hover {
-    background: #ecf5fe;
-  }
+  padding: 0;
 `;
 
 const Description = styled.p`
@@ -117,7 +93,7 @@ const Flex = styled.div`
 const Blocked = ({ shouldSync }) => {
   const { list } = useList({ shouldSync });
   const { active } = useActive({ shouldSync });
-  const { setBreakAt, breakAt, isBreak } = useBreak({ shouldSync });
+  const { setBreakAt, breakAt, isBreak, interval } = useBreak({ shouldSync });
 
   const { isFocusModeOn, baseURL } = useFocusMode({ isActive: active, list, isBreak, breakAt });
 
@@ -135,13 +111,13 @@ const Blocked = ({ shouldSync }) => {
         <Dialog open>
           <Flex>
             <FocusIcon size={24} color="#1881f2" />
-            <Heading>Focus mode is on</Heading>
+            <Heading>Focus mode is ON</Heading>
           </Flex>
           <Description>{baseURL} and other distracting sites are paused right now</Description>
           <StyledMenu>
-            <StyledButton type="button" onClick={handleBreak}>
-              take a 5 mins break
-            </StyledButton>
+            <BreakButton type="button" onClick={handleBreak} fontSize="12px">
+              take a {interval} mins break
+            </BreakButton>
           </StyledMenu>
         </Dialog>
       </DialogContainer>
@@ -157,8 +133,8 @@ const App = () => {
   useEffect(() => {
     browser.runtime.onMessage.addListener(function(request) {
       console.log('req', request);
-      if (request && request.id === 'onActivated') {
-        console.log('onActivated');
+      if (request && request.id === 'fromBackground') {
+        console.log('fromBackground');
         setActive(request.active);
         setBreakAt(request.breakAt);
         dispatch({ type: 'INIT', payload: request.list });
