@@ -15,7 +15,7 @@ import BreakButton from 'components/BreakButton';
 
 const GlobalStyle = createGlobalStyle`
   :host {
-    all: inherit;
+    all: initial;
     ${globalStyle}
   }
 `;
