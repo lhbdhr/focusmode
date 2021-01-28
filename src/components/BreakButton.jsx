@@ -17,9 +17,10 @@ const StyledButton = styled.button`
   border: none;
   text-transform: uppercase;
   padding: 8px;
-  padding-right: 12px;
-  padding-left: 12px;
+  padding-right: 6px;
+  padding-left: 6px;
   margin: 0;
+  margin-left: -3px;
   &:hover {
     background: ${props => props.hoverBgColor || '#ecf5fe'};
   }
