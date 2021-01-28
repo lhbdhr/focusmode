@@ -45,7 +45,7 @@ const useStore = create(set => {
     list: [],
     currentTabId: '',
     breakAt: null,
-    interval: 0.5,
+    interval: 5,
     setActive: active => {
       set(() => ({ active }));
     },
@@ -70,7 +70,7 @@ const useStore = create(set => {
         breakAt: dayjs()
           .subtract(1, 'day')
           .toJSON(),
-        interval: 0.5,
+        interval: 5,
       });
 
       console.log('finish fetching for all', { active, list, breakAt, interval });

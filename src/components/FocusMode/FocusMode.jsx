@@ -90,7 +90,7 @@ export default ({ shouldSync }) => {
 
           {active ? (
             isBreak ? (
-              <Description>Focus mode will resume {remainingTime}</Description>
+              <Description>Focus mode will resume {remainingTime}.</Description>
             ) : (
               <Description>Distracting sites are pause</Description>
             )
