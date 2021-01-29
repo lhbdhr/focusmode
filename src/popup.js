@@ -32,7 +32,7 @@ const Popup = () => {
     <ThemeProvider>
       <GlobalStyle />
       <Container>
-        <Suspense fallback={<div>loading...</div>}>
+        <Suspense fallback={<div>Loading...</div>}>
           <FocusMode shouldSync={initRef.current} />
         </Suspense>
       </Container>
