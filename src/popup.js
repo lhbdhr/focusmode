@@ -26,8 +26,6 @@ const Popup = () => {
     initRef.current = true;
   }, []);
 
-  console.log('inside popup', { list, active, breakAt });
-
   return (
     <ThemeProvider>
       <GlobalStyle />

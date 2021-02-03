@@ -1,6 +1,10 @@
 // import TrashIcon from 'assets/icons/trash.svg';
-import { Trash as TrashIcon } from '@styled-icons/feather/Trash';
-import { Focus as FocusIcon } from '@styled-icons/remix-line/Focus';
+import {
+  Trash as TrashIcon,
+  Coffee as CoffeeIcon,
+  Circle as CircleIcon,
+  Hexagon as HexagonIcon,
+} from '@styled-icons/feather';
 import Box from 'components/Box';
 import Control from 'components/Control';
 import DateLabel from 'components/DateLabel';
@@ -15,6 +19,7 @@ import styled from 'styled-components';
 import Item from './Item';
 import Text from './Text';
 import BreakButton from 'components/BreakButton';
+import IconWrapper from 'components/IconWrapper';
 
 const Heading = styled.h1`
   font-size: 16px;
@@ -35,11 +40,9 @@ export default ({ shouldSync }) => {
 
   const { list, dispatch } = useList({ shouldSync });
   const { setActive, active } = useActive({ shouldSync });
-  const { breakAt, isBreak, resetBreakAt, interval, endTime, remainingTime } = useBreak({
+  const { setBreakAt, isBreak, resetBreakAt, interval, remainingTime } = useBreak({
     shouldSync,
   });
-
-  console.log('all in focusMode', { list, active, breakAt, isBreak, interval });
 
   const handleInputChange = ({ target: { value } }) => setURL(value);
 
@@ -57,9 +60,9 @@ export default ({ shouldSync }) => {
     setActive(!active);
   };
 
-  // const handleBreak = () => {
-  //   setBreakAt(new Date());
-  // };
+  const handleBreak = () => {
+    setBreakAt(new Date());
+  };
 
   const handleResume = () => {
     resetBreakAt();
@@ -76,7 +79,20 @@ export default ({ shouldSync }) => {
             justifyContent="space-between"
           >
             <Box display="flext" alignItems="center">
-              <FocusIcon size={24} color="#1881f2" />{' '}
+              {isBreak ? (
+                <IconWrapper>
+                  <CoffeeIcon size={18} strokeWidth={2} color="#3055e8" />
+                </IconWrapper>
+              ) : active ? (
+                <IconWrapper>
+                  <CircleIcon size={18} strokeWidth={2} color="#3055e8" />
+                </IconWrapper>
+              ) : (
+                <IconWrapper>
+                  <HexagonIcon size={18} strokeWidth={2} color="#3055e8" />
+                </IconWrapper>
+              )}
+
               <Heading>
                 {active
                   ? isBreak
@@ -97,12 +113,14 @@ export default ({ shouldSync }) => {
           ) : (
             <Description>Turn on to pause distracting sites</Description>
           )}
-          {isBreak && (
-            // <Box width="100%" justifyContent="flex-end" display="flex">
+          {isBreak ? (
             <BreakButton onClick={handleResume} fontSize="12px">
               Resume now
             </BreakButton>
-            // </Box>
+          ) : (
+            <BreakButton onClick={handleBreak} fontSize="12px">
+              Take a {interval} mins break
+            </BreakButton>
           )}
         </Box>
       </Box>

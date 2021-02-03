@@ -1,11 +1,11 @@
 import { css } from 'styled-components';
 import browser from 'webextension-polyfill';
 
-const interRegular = browser.extension.getURL('assets/fonts/Inter-Regular.woff2');
-const interMedium = browser.extension.getURL('assets/fonts/Inter-Medium.woff2');
+const montserratRegular = browser.extension.getURL('assets/fonts/Montserrat-Regular.woff2');
+const montserratMedium = browser.extension.getURL('assets/fonts/Montserrat-Medium.woff2');
 
 const styles = css`
-  font-family: Inter, sans-serif;
+  font-family: Montserrat, sans-serif !important;
   font-size: 16px;
   box-sizing: border-box;
   margin: 0;
@@ -14,8 +14,8 @@ const styles = css`
   color: ${props => props.theme.font.primary};
 
   @font-face {
-    font-family: Inter;
-    src: url(${interRegular}) url(${interMedium});
+    font-family: Montserrat;
+    src: url(${montserratRegular}) url(${montserratMedium});
   }
 `;
 

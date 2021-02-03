@@ -12,6 +12,8 @@ import useActive from 'hooks/useActive';
 import useBreak from 'hooks/useBreak';
 import useFocusMode from 'hooks/useFocusMode';
 import BreakButton from 'components/BreakButton';
+import IconWrapper from 'components/IconWrapper';
+import { Circle as CircleIcon, Hexagon as HexagonIcon } from '@styled-icons/feather';
 
 const GlobalStyle = createGlobalStyle`
   :host {
@@ -35,7 +37,7 @@ const Div = styled.div`
   position: absolute;
   top: 200px;
   width: 320px;
-  min-height: 104px;
+  min-height: 98px;
   border-radius: 4px;
   padding: 20px;
   border: none;
@@ -68,6 +70,7 @@ const StyledMenu = styled.div`
 `;
 
 const Description = styled.p`
+  font-size: 15px;
   color: ${props => props.theme.font.secondary};
 `;
 
@@ -92,11 +95,6 @@ const Blocked = ({ shouldSync }) => {
 
   const { isFocusModeOn, baseURL } = useFocusMode({ isActive: active, list, isBreak, breakAt });
 
-  const now = new Date().getTime();
-  if (breakAt) {
-    console.log('break is set', { list, active, isFocusModeOn, breakAt, now, isBreak });
-  }
-
   const handleBreak = () => {
     setBreakAt(new Date());
   };
@@ -105,7 +103,15 @@ const Blocked = ({ shouldSync }) => {
       <Dialog open>
         <Div>
           <Flex>
-            <FocusIcon size={24} color="#1881f2" />
+            {active ? (
+              <IconWrapper>
+                <CircleIcon size={18} strokeWidth={2} color="#3055e8" />
+              </IconWrapper>
+            ) : (
+              <IconWrapper>
+                <HexagonIcon size={18} strokeWidth={2} color="#3055e8" />
+              </IconWrapper>
+            )}
             <Heading>Focus mode is ON</Heading>
           </Flex>
           <Description>{baseURL} and other distracting sites are paused right now</Description>
@@ -127,21 +133,15 @@ const App = () => {
 
   useEffect(() => {
     browser.runtime.onMessage.addListener(function(request) {
-      console.log('req', request);
       if (request && request.id === 'fromBackground') {
-        console.log('fromBackground');
         setActive(request.active);
         setBreakAt(request.breakAt);
         dispatch({ type: 'INIT', payload: request.list });
       } else if (request && request.id === 'onToggle') {
-        console.log('onToggle', { active: request.active });
         setActive(request.active);
       } else if (request && request.id === 'onChangeList') {
-        console.log('onChangeList');
-
         dispatch({ type: 'INIT', payload: request.list });
       } else if (request && request.id === 'onBreak') {
-        console.log('onBreak', { breakAt: request.breakAt });
         setBreakAt(request.breakAt);
       }
     });

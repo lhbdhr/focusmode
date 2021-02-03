@@ -63,7 +63,6 @@ const useStore = create(set => {
       set(() => ({ interval: interval * 60000 }));
     },
     fetch: async () => {
-      console.log('start fetching for all');
       const { active, list, breakAt, interval } = await browser.storage.local.get({
         active: false,
         list: getStubData(),
@@ -72,8 +71,6 @@ const useStore = create(set => {
           .toJSON(),
         interval: 5,
       });
-
-      console.log('finish fetching for all', { active, list, breakAt, interval });
 
       set({ active, list, interval, breakAt: dayjs(breakAt).toJSON() });
       return { active, list, interval, breakAt };

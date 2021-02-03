@@ -10,19 +10,19 @@ const StyledButton = styled.button`
   width: auto;
   border-radius: 6px;
   place-items: center;
-  color: ${props => props.color || '#1881f2'};
+  color: ${props => props.theme.main[500]};
   font-size: ${props => props.fontSize || '14px'};
 
   background: transparent;
   border: none;
   text-transform: uppercase;
   padding: 8px;
-  padding-right: 6px;
-  padding-left: 6px;
+
   margin: 0;
-  margin-left: -3px;
+  margin-left: -8px;
+  margin-bottom: -8px;
   &:hover {
-    background: ${props => props.hoverBgColor || '#ecf5fe'};
+    background: #eef2ff;
   }
 `;
 

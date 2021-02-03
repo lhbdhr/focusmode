@@ -13,13 +13,16 @@ chrome.tabs.onActivated.addListener(function(activeInfo) {
     const [baseURL] = tab.url.match(baseURLRegex);
     if (baseURL) {
       const { list, active, breakAt } = await browser.storage.local.get();
-
-      browser.tabs.sendMessage(activeInfo.tabId, {
-        breakAt,
-        active,
-        list,
-        id: 'fromBackground',
-      });
+      try {
+        browser.tabs.sendMessage(activeInfo.tabId, {
+          breakAt,
+          active,
+          list,
+          id: 'fromBackground',
+        });
+      } catch (error) {
+        return;
+      }
     }
   });
 });
@@ -29,13 +32,16 @@ chrome.tabs.onUpdated.addListener(async (tabId, change, tab) => {
     const [baseURL] = change.url.match(baseURLRegex);
     if (baseURL) {
       const { list, active, breakAt } = await browser.storage.local.get();
-
-      browser.tabs.sendMessage(tabId, {
-        breakAt,
-        active,
-        list,
-        id: 'fromBackground',
-      });
+      try {
+        browser.tabs.sendMessage(tabId, {
+          breakAt,
+          active,
+          list,
+          id: 'fromBackground',
+        });
+      } catch (error) {
+        return;
+      }
     }
   }
 });

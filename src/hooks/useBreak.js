@@ -13,7 +13,6 @@ export default function useBreak({ shouldSync = false }) {
   // Syncing with storage after data changed
   useEffect(() => {
     if (shouldSync) {
-      console.log('syncing in useBreak...');
       browser.storage.local.set({ breakAt: dayjs(breakAt).toJSON() });
       if (currentTabId) {
         browser.tabs.sendMessage(currentTabId, {
@@ -48,8 +47,6 @@ export default function useBreak({ shouldSync = false }) {
         .fromNow();
     }
   }, [breakAt, interval]);
-
-  console.log('in useBreak', { isBreak });
 
   return {
     setBreakAt,
