@@ -124,14 +124,6 @@ export default ({ shouldSync }) => {
           )}
         </Box>
       </Box>
-      {/* <Box display="flex">
-        {active && (
-          <BreakButton onClick={handleBreak} fontSize="12px">
-            Take a break for {interval} minutes
-          </BreakButton>
-        )}
-      </Box> */}
-
       <Box mb={3} mt={3}>
         <DateLabel>OPTIONS</DateLabel>
       </Box>
