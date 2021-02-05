@@ -1,9 +1,9 @@
 {
   "manifest_version": 2,
   "version": "1.1.0",
-  "name": "Focus Mode: Stay focused without frustration",
-  "short_name": "Focusmode",
-  "description": "Make an informed decision before you visit a distracting websites.",
+  "name": "Focus Mode",
+  "short_name": "Focus Mode",
+  "description": "Stayed focused like humans, no robots.",
   "background": {
     "scripts": ["background.js"]
   },
