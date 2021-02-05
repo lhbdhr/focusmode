@@ -6,6 +6,7 @@ const Text = styled.span`
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
+  padding-left: 12px;
 `;
 
 const Enhanced = ({ value }) => {

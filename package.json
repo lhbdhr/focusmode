@@ -29,8 +29,8 @@
     "webpack-manifest-version-sync-plugin": "^0.0.2"
   },
   "dependencies": {
-    "@styled-system/prop-types": "^5.1.2",
-    "core-js": "^3.3.3",
+    "@styled-system/prop-types": "^5.1.5",
+    "core-js": "^3.8.3",
     "dayjs": "^1.10.4",
     "lodash.debounce": "^4.0.8",
     "lodash.omit": "^4.5.0",
@@ -39,11 +39,11 @@
     "preact-shadow-root": "^1.0.2",
     "prop-types": "^15.7.2",
     "react-toggle": "^4.1.1",
-    "regenerator-runtime": "^0.13.3",
-    "styled-components": "^4.4.0",
+    "regenerator-runtime": "^0.13.7",
+    "styled-components": "^5.2.1",
     "styled-icons": "^10.26.0",
-    "styled-system": "^5.1.2",
-    "webextension-polyfill": "^0.5.0",
+    "styled-system": "^5.1.5",
+    "webextension-polyfill": "^0.7.0",
     "zustand": "^3.3.1"
   }
 }

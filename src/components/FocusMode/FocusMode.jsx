@@ -31,7 +31,7 @@ const Description = styled.p`
   font-size: 14px;
   color: ${props => props.theme.font.secondary};
   margin-top: 0;
-  margin-bottom: 18px;
+  margin-bottom: 12px;
   line-height: 1.8;
 `;
 
@@ -68,13 +68,13 @@ export default ({ shouldSync }) => {
     resetBreakAt();
   };
   return (
-    <Box display="flex" flexDirection="column" height="420px">
+    <Box display="flex" flexDirection="column" height="520px">
       <Box display="flex" justifyContent="space-between">
         <Box width="100%">
           <Box
             display="flex"
             alignItems="center"
-            mb={3}
+            mb={'10px'}
             width="100%"
             justifyContent="space-between"
           >
@@ -97,8 +97,8 @@ export default ({ shouldSync }) => {
                 {active
                   ? isBreak
                     ? "You're on a break"
-                    : 'Focus mode is ON'
-                  : 'Focus mode is OFF'}
+                    : 'Focus mode is on'
+                  : 'Focus mode is off'}
               </Heading>
             </Box>
             {!isBreak && <Switch onChange={toggle} checked={active} />}
@@ -108,28 +108,30 @@ export default ({ shouldSync }) => {
             isBreak ? (
               <Description>Focus mode will resume {remainingTime}.</Description>
             ) : (
-              <Description>Distracting sites are pause</Description>
+              <Description>Distracting websites are now blocked</Description>
             )
           ) : (
-            <Description>Turn on to pause distracting sites</Description>
+            <Description>Turn on to block distracting websites</Description>
           )}
           {isBreak ? (
             <BreakButton onClick={handleResume} fontSize="12px">
               Resume now
             </BreakButton>
-          ) : (
+          ) : active ? (
             <BreakButton onClick={handleBreak} fontSize="12px">
-              Take a {interval} mins break
+              Take a {interval} minutes break
             </BreakButton>
+          ) : (
+            <Box height="22px"></Box>
           )}
         </Box>
       </Box>
-      <Box mb={3} mt={3}>
+      <Box mb={3} mt={4}>
         <DateLabel>OPTIONS</DateLabel>
       </Box>
       <Box flexShrink="0" mb={3}>
         <Input
-          placeholder={'Enter a distracting website'}
+          placeholder={'Enter a distracting website link'}
           onKeyPress={addItem}
           value={url}
           onChange={handleInputChange}

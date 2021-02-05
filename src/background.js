@@ -8,26 +8,28 @@ browser.runtime.onMessage.addListener(async msg => {
   }
 });
 
-chrome.tabs.onActivated.addListener(function(activeInfo) {
-  chrome.tabs.get(activeInfo.tabId, async function(tab) {
-    const [baseURL] = tab.url.match(baseURLRegex);
-    if (baseURL) {
-      const { list, active, breakAt } = await browser.storage.local.get();
-      try {
-        browser.tabs.sendMessage(activeInfo.tabId, {
-          breakAt,
-          active,
-          list,
-          id: 'fromBackground',
-        });
-      } catch (error) {
-        return;
-      }
+browser.tabs.onActivated.addListener(async function(activeInfo) {
+  const tabs = await browser.tabs.query({ currentWindow: true, active: true });
+  const [baseURL] = tabs[0].url.match(baseURLRegex);
+
+  if (baseURL) {
+    const { list, active, breakAt } = await browser.storage.local.get();
+
+    try {
+      browser.tabs.sendMessage(activeInfo.tabId, {
+        breakAt,
+        active,
+        list,
+        id: 'fromBackground',
+      });
+      return true;
+    } catch (error) {
+      return false;
     }
-  });
+  }
 });
 
-chrome.tabs.onUpdated.addListener(async (tabId, change, tab) => {
+browser.tabs.onUpdated.addListener(async (tabId, change, tab) => {
   if (tab.active && change.url) {
     const [baseURL] = change.url.match(baseURLRegex);
     if (baseURL) {
@@ -40,7 +42,7 @@ chrome.tabs.onUpdated.addListener(async (tabId, change, tab) => {
           id: 'fromBackground',
         });
       } catch (error) {
-        return;
+        return false;
       }
     }
   }

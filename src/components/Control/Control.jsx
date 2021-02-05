@@ -8,7 +8,8 @@ const Control = styled.button`
   background-color: transparent;
   border-radius: 50%;
   padding: 5px;
-  margin-left: 20px;
+  margin-left: 8px;
+  margin-right: 8px;
   transition: all 0.2s ease-in-out;
   color: ${props => props.theme.palette.secondary};
   cursor: pointer;

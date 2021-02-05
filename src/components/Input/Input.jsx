@@ -18,7 +18,7 @@ const BaseInput = styled.input`
   transition: all 0.4s;
 
   ::placeholder {
-    color: #64748b;
+    color: ${props => props.theme.cool_grey[400]};
   }
 
   :focus {

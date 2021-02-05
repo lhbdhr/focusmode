@@ -5,7 +5,6 @@ import React, { useEffect, useRef } from 'react';
 import ReactDOM from 'react-dom';
 import styled, { createGlobalStyle, StyleSheetManager } from 'styled-components';
 import browser from 'webextension-polyfill';
-import { Focus as FocusIcon } from '@styled-icons/remix-line/Focus';
 import useStore from 'hooks/useStore';
 import useList from 'hooks/useList';
 import useActive from 'hooks/useActive';
@@ -37,7 +36,7 @@ const Div = styled.div`
   position: absolute;
   top: 200px;
   width: 320px;
-  min-height: 98px;
+  min-height: 108px;
   border-radius: 4px;
   padding: 20px;
   border: none;
@@ -56,16 +55,13 @@ const Dialog = styled.dialog`
   align-items: center;
   justify-content: center;
   background: rgba(0, 0, 0, 0.8);
-  /* ::backdrop {
-    background: rgba(0, 0, 0, 0.1);
-  } */
 `;
 
 const StyledMenu = styled.div`
   display: flex;
   width: 100%;
-  justify-content: flex-start;
-
+  justify-content: space-between;
+  margin-top: 30px;
   padding: 0;
 `;
 
@@ -90,14 +86,19 @@ const Flex = styled.div`
 
 const Blocked = ({ shouldSync }) => {
   const { list } = useList({ shouldSync });
-  const { active } = useActive({ shouldSync });
+  const { active, setActive } = useActive({ shouldSync });
   const { setBreakAt, breakAt, isBreak, interval } = useBreak({ shouldSync });
 
-  const { isFocusModeOn, baseURL } = useFocusMode({ isActive: active, list, isBreak, breakAt });
+  const { isFocusModeOn } = useFocusMode({ isActive: active, list, isBreak, breakAt });
 
   const handleBreak = () => {
     setBreakAt(new Date());
   };
+
+  // const handleTurnOff = () => {
+  //   setActive(false);
+  // };
+
   return (
     isFocusModeOn && (
       <Dialog open>
@@ -112,13 +113,16 @@ const Blocked = ({ shouldSync }) => {
                 <HexagonIcon size={18} strokeWidth={2} color="#3055e8" />
               </IconWrapper>
             )}
-            <Heading>Focus mode is ON</Heading>
+            <Heading>Focus mode is on</Heading>
           </Flex>
-          <Description>{baseURL} and other distracting sites are paused right now</Description>
+          <Description>Distracting websites are blocked right now</Description>
           <StyledMenu>
             <BreakButton type="button" onClick={handleBreak} fontSize="12px">
-              take a {interval} mins break
+              take a {interval} minutes break
             </BreakButton>
+            {/* <BreakButton type="button" onClick={handleTurnOff} fontSize="12px">
+              turn off now
+            </BreakButton> */}
           </StyledMenu>
         </Div>
       </Dialog>

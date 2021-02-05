@@ -52,9 +52,9 @@ const Div = styled('div')`
     transition: all 0.2s ease;
   }
 
-  .react-toggle:hover:not(.react-toggle--disabled) .react-toggle-track {
-    background-color: #e7edf5;
-  }
+  /* .react-toggle:hover:not(.react-toggle--disabled) .react-toggle-track {
+    background-color: ${props => props.theme.cool_grey[100]};
+  } */
 
   .react-toggle--checked .react-toggle-track {
     background-color: ${props => props.theme.main[500]};
