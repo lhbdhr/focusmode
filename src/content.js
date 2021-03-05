@@ -95,9 +95,9 @@ const Blocked = ({ shouldSync }) => {
     setBreakAt(new Date());
   };
 
-  // const handleTurnOff = () => {
-  //   setActive(false);
-  // };
+  const handleTurnOff = () => {
+    setActive(false);
+  };
 
   return (
     isFocusModeOn && (
@@ -120,9 +120,10 @@ const Blocked = ({ shouldSync }) => {
             <BreakButton type="button" onClick={handleBreak} fontSize="12px">
               take a {interval} minutes break
             </BreakButton>
-            {/* <BreakButton type="button" onClick={handleTurnOff} fontSize="12px">
+
+            <BreakButton type="button" onClick={handleTurnOff} fontSize="12px">
               turn off now
-            </BreakButton> */}
+            </BreakButton>
           </StyledMenu>
         </Div>
       </Dialog>
