@@ -84,9 +84,9 @@ const Flex = styled.div`
   align-items: center;
 `;
 
-const Blocked = ({ shouldSync }) => {
+const Blocked = ({ shouldSync, onCloseTab }) => {
   const { list } = useList({ shouldSync });
-  const { active, setActive } = useActive({ shouldSync });
+  const { active } = useActive({ shouldSync });
   const { setBreakAt, breakAt, isBreak, interval } = useBreak({ shouldSync });
 
   const { isFocusModeOn } = useFocusMode({ isActive: active, list, isBreak, breakAt });
@@ -95,9 +95,9 @@ const Blocked = ({ shouldSync }) => {
     setBreakAt(new Date());
   };
 
-  const handleTurnOff = () => {
-    setActive(false);
-  };
+  // const handleTurnOff = () => {
+  //   setActive(false);
+  // };
 
   return (
     isFocusModeOn && (
@@ -121,8 +121,8 @@ const Blocked = ({ shouldSync }) => {
               take a {interval} minutes break
             </BreakButton>
 
-            <BreakButton type="button" onClick={handleTurnOff} fontSize="12px">
-              turn off now
+            <BreakButton type="button" onClick={onCloseTab} fontSize="12px">
+              ok
             </BreakButton>
           </StyledMenu>
         </Div>
@@ -135,6 +135,10 @@ const App = () => {
   const { fetch, dispatch, setActive, setBreakAt } = useStore();
 
   const initRef = useRef(null);
+
+  const onCloseTab = () => {
+    browser.runtime.sendMessage({ type: 'closeTab' });
+  };
 
   useEffect(() => {
     browser.runtime.onMessage.addListener(function(request) {
@@ -161,7 +165,7 @@ const App = () => {
     <StyleSheetManager target={appContainer}>
       <ThemeProvider>
         <GlobalStyle />
-        <Blocked shouldSync={initRef.current} />
+        <Blocked shouldSync={initRef.current} onCloseTab={onCloseTab} />
       </ThemeProvider>
     </StyleSheetManager>
   );

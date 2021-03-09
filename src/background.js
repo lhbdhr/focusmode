@@ -2,9 +2,12 @@ import 'libs/polyfills';
 import browser from 'webextension-polyfill';
 import { baseURLRegex } from 'constants/regex';
 
-browser.runtime.onMessage.addListener(async msg => {
-  if (msg.greeting === 'showOptionsPage') {
+browser.runtime.onMessage.addListener(async (request, sender) => {
+  if (request.greeting === 'showOptionsPage') {
     browser.runtime.openOptionsPage();
+  }
+  if (request.type == 'closeTab') {
+    browser.tabs.remove(sender.tab.id);
   }
 });
 
