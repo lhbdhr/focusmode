@@ -10,6 +10,7 @@ import useList from 'hooks/useList';
 import useActive from 'hooks/useActive';
 import useBreak from 'hooks/useBreak';
 import useFocusMode from 'hooks/useFocusMode';
+import useDarkMode from 'hooks/useDarkMode';
 import BreakButton from 'components/BreakButton';
 import IconWrapper from 'components/IconWrapper';
 import { Circle as CircleIcon, Hexagon as HexagonIcon } from '@styled-icons/feather';
@@ -32,7 +33,6 @@ shadow.appendChild(appContainer);
 document.documentElement.appendChild(root);
 
 const Div = styled.div`
-  background: white;
   position: absolute;
   top: 200px;
   width: 320px;
@@ -40,6 +40,7 @@ const Div = styled.div`
   border-radius: 4px;
   padding: 20px;
   border: none;
+  background-color: ${props => props.theme.background};
 `;
 
 const Dialog = styled.dialog`
@@ -55,6 +56,8 @@ const Dialog = styled.dialog`
   align-items: center;
   justify-content: center;
   background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: saturate(0.5);
+  backdrop-filter: blur(2px);
 `;
 
 const StyledMenu = styled.div`
@@ -67,7 +70,7 @@ const StyledMenu = styled.div`
 
 const Description = styled.p`
   font-size: 15px;
-  color: ${props => props.theme.color.secondary};
+  color: ${props => props.theme.description};
 `;
 
 const Heading = styled.h2`
@@ -76,6 +79,7 @@ const Heading = styled.h2`
   font-size: 18px;
   margin-left: 0.6rem;
   font-weight: 600;
+  color: ${props => props.theme.title};
 `;
 
 const Flex = styled.div`
@@ -88,6 +92,7 @@ const Blocked = ({ shouldSync, onCloseTab }) => {
   const { list } = useList({ shouldSync });
   const { active } = useActive({ shouldSync });
   const { setBreakAt, breakAt, isBreak, interval } = useBreak({ shouldSync });
+  const { darkMode } = useDarkMode({ shouldSync });
 
   const { isFocusModeOn } = useFocusMode({ isActive: active, list, isBreak, breakAt });
 
@@ -102,11 +107,11 @@ const Blocked = ({ shouldSync, onCloseTab }) => {
           <Flex>
             {active ? (
               <IconWrapper>
-                <CircleIcon size={18} strokeWidth={2} color="#3055e8" />
+                <CircleIcon size={18} strokeWidth={2} color={darkMode ? '#dae1fb' : '#3055e8'} />
               </IconWrapper>
             ) : (
               <IconWrapper>
-                <HexagonIcon size={18} strokeWidth={2} color="#3055e8" />
+                <HexagonIcon size={18} strokeWidth={2} color={darkMode ? '#dae1fb' : '#3055e8'} />
               </IconWrapper>
             )}
             <Heading>Focus mode is on</Heading>
@@ -128,7 +133,7 @@ const Blocked = ({ shouldSync, onCloseTab }) => {
 };
 
 const App = () => {
-  const { fetch, dispatch, setActive, setBreakAt } = useStore();
+  const { fetch, dispatch, setActive, setBreakAt, darkMode, setDarkMode } = useStore();
 
   const initRef = useRef(null);
 
@@ -161,7 +166,7 @@ const App = () => {
 
   return (
     <StyleSheetManager target={appContainer}>
-      <ThemeProvider>
+      <ThemeProvider darkMode={darkMode}>
         <GlobalStyle />
         <Blocked shouldSync={initRef.current} onCloseTab={onCloseTab} />
       </ThemeProvider>

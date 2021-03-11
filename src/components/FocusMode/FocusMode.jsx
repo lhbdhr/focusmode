@@ -106,8 +106,6 @@ export default ({ shouldSync }) => {
     setDarkMode(!darkMode);
   };
 
-  console.log({ darkMode });
-
   return (
     <Box display="flex" flexDirection="column" height="480px">
       <Box display="flex" justifyContent="space-between">

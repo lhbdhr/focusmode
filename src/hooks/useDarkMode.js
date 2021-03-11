@@ -8,9 +8,7 @@ export default function useDarkMode({ shouldSync = false }) {
   // Syncing with storage after data changed
   useEffect(() => {
     if (shouldSync) {
-      console.log('here');
       browser.storage.local.set({ darkMode });
-      console.log('after sync');
 
       if (currentTabId) {
         browser.tabs.sendMessage(currentTabId, {
