@@ -5,7 +5,7 @@ const IconWrapper = styled.div`
   height: 32px;
   margin-right: 4px;
   border-radius: 50%;
-  background-color: ${props => props.theme.main[200]};
+  background-color: ${props => props.theme.icon.background};
   display: flex;
   align-items: center;
   justify-content: center;

@@ -4,6 +4,8 @@ import {
   Coffee as CoffeeIcon,
   Circle as CircleIcon,
   Hexagon as HexagonIcon,
+  Sun as SunIcon,
+  Moon as MoonIcon,
 } from '@styled-icons/feather';
 import Box from 'components/Box';
 import Control from 'components/Control';
@@ -14,22 +16,53 @@ import { ADD_LINK, REMOVE_LINK, UPDATE_LINK } from 'hooks/useStore';
 import useActive from 'hooks/useActive';
 import useList from 'hooks/useList';
 import useBreak from 'hooks/useBreak';
+import useDarkMode from 'hooks/useDarkMode';
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import Item from './Item';
-import Text from './Text';
+import URL from './URL';
 import BreakButton from 'components/BreakButton';
 import IconWrapper from 'components/IconWrapper';
+
+const Text = styled.span`
+  flex-grow: 1;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  padding-left: 8px;
+  font-size: 12px;
+`;
+
+const IconButton = styled.button`
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background-color: transparent;
+  border-radius: 4px;
+  padding: 8px;
+  margin-bottom: 14px;
+  transition: all 0.2s ease-in-out;
+  color: ${props => props.theme.palette.secondary};
+  cursor: pointer;
+  outline: none;
+
+  :hover {
+    background-color: ${props => props.theme.darkModeButton.background};
+    color: ${props => props.theme.darkModeButton.color};
+  }
+`;
 
 const Heading = styled.h1`
   font-size: 16px;
   margin: 0;
   margin-left: 0.6rem;
+  color: ${props => props.theme.title};
 `;
 
 const Description = styled.p`
   font-size: 14px;
-  color: ${props => props.theme.font.secondary};
+  color: ${props => props.theme.description};
   margin-top: 0;
   margin-bottom: 12px;
   line-height: 1.8;
@@ -40,6 +73,7 @@ export default ({ shouldSync }) => {
 
   const { list, dispatch } = useList({ shouldSync });
   const { setActive, active } = useActive({ shouldSync });
+  const { setDarkMode, darkMode } = useDarkMode({ shouldSync });
   const { setBreakAt, isBreak, resetBreakAt, interval, remainingTime } = useBreak({
     shouldSync,
   });
@@ -67,8 +101,15 @@ export default ({ shouldSync }) => {
   const handleResume = () => {
     resetBreakAt();
   };
+
+  const handleDarkMode = () => {
+    setDarkMode(!darkMode);
+  };
+
+  console.log({ darkMode });
+
   return (
-    <Box display="flex" flexDirection="column" height="520px">
+    <Box display="flex" flexDirection="column" height="480px">
       <Box display="flex" justifyContent="space-between">
         <Box width="100%">
           <Box
@@ -81,15 +122,15 @@ export default ({ shouldSync }) => {
             <Box display="flext" alignItems="center">
               {isBreak ? (
                 <IconWrapper>
-                  <CoffeeIcon size={18} strokeWidth={2} color="#3055e8" />
+                  <CoffeeIcon size={18} strokeWidth={2} color={darkMode ? '#dae1fb' : '#3055e8'} />
                 </IconWrapper>
               ) : active ? (
                 <IconWrapper>
-                  <CircleIcon size={18} strokeWidth={2} color="#3055e8" />
+                  <CircleIcon size={18} strokeWidth={2} color={darkMode ? '#dae1fb' : '#3055e8'} />
                 </IconWrapper>
               ) : (
                 <IconWrapper>
-                  <HexagonIcon size={18} strokeWidth={2} color="#3055e8" />
+                  <HexagonIcon size={18} strokeWidth={2} color={darkMode ? '#dae1fb' : '#3055e8'} />
                 </IconWrapper>
               )}
 
@@ -140,12 +181,26 @@ export default ({ shouldSync }) => {
       <Box overflowY="auto" flexGrow="1" mb={4}>
         {list.map(({ id, url }) => (
           <Item key={id}>
-            <Text id={id} title={url} value={url} update={updateItem} />
+            <URL id={id} title={url} value={url} update={updateItem} />
             <Control onClick={removeItem(id)}>
               <TrashIcon size={16} />
             </Control>
           </Item>
         ))}
+      </Box>
+      <Box w="100%" display="flex" justifyContent="flex-end">
+        <IconButton onClick={handleDarkMode}>
+          {darkMode ? (
+            <>
+              <SunIcon size={16} strokeWidth={1.8} /> <Text>Light Mode</Text>
+            </>
+          ) : (
+            <>
+              <MoonIcon strokeWidth={1.8} size={16} />
+              <Text>Dark Mode</Text>
+            </>
+          )}
+        </IconButton>
       </Box>
     </Box>
   );

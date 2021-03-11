@@ -19,7 +19,7 @@ const GlobalStyle = createGlobalStyle`
 
 const Popup = () => {
   const initRef = useRef(null);
-  const { fetch, list, active, getCurrentTabId, breakAt } = useStore();
+  const { fetch, getCurrentTabId } = useStore();
   useEffect(() => {
     fetch();
     getCurrentTabId();
@@ -27,7 +27,7 @@ const Popup = () => {
   }, []);
 
   return (
-    <ThemeProvider>
+    <ThemeProvider shouldSync={initRef.current}>
       <GlobalStyle />
       <Container>
         <Suspense fallback={<div>Loading...</div>}>

@@ -10,7 +10,7 @@ const StyledButton = styled.button`
   width: auto;
   border-radius: 6px;
   place-items: center;
-  color: ${props => props.theme.main[500]};
+  color: ${props => props.theme.button.color};
   font-size: ${props => props.fontSize || '14px'};
 
   background: transparent;
@@ -22,7 +22,8 @@ const StyledButton = styled.button`
   margin-left: -8px;
   margin-bottom: -8px;
   &:hover {
-    background: #eef2ff;
+    background: ${props => props.theme.button.hover.background};
+    color: ${props => props.theme.button.hover.color};
   }
 `;
 

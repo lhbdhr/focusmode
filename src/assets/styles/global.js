@@ -11,7 +11,7 @@ const styles = css`
   margin: 0;
   padding: 0;
   background-color: ${props => props.theme.palette.primary};
-  color: ${props => props.theme.font.primary};
+  color: ${props => props.theme.color.primary};
 
   @font-face {
     font-family: Montserrat;

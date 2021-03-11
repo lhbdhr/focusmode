@@ -3,16 +3,52 @@ import config from './config';
 export default {
   ...config,
   palette: {
-    primary: '#FFFFFF',
     secondary: '#1F2937',
     tertiary: '#E2E8F0',
     success: '#3B82F6',
     neutral: '#BDBDBD',
   },
-  font: {
+  color: {
     primary: '#1F2937',
     secondary: '#4B5563',
     tertiary: '#D1D5DB',
+  },
+
+  option: '#9e9e9e',
+
+  icon: {
+    background: '#dae1fb',
+  },
+
+  list: {
+    color: '#1F2937',
+  },
+
+  background: '#FFFFFF',
+  title: '#262626',
+  description: '#607d8b',
+
+  input: {
+    background: '#f1f5f9',
+    color: '#4B5563',
+    placeholder: '#78909c',
+  },
+
+  darkModeButton: {
+    background: '#dae1fb',
+    color: '#4364ea',
+  },
+
+  deleteButton: {
+    background: '#fef2f2',
+    color: '#dc2626',
+  },
+
+  button: {
+    hover: {
+      background: '#eef2ff',
+    },
+    color: '#4364ea',
   },
 
   grey: {

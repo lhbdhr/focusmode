@@ -16,8 +16,8 @@ const Control = styled.button`
   outline: none;
 
   :hover {
-    background-color: #fef2f2;
-    color: #dc2626;
+    background-color: ${props => props.theme.deleteButton.background};
+    color: ${props => props.theme.deleteButton.color};
   }
 `;
 

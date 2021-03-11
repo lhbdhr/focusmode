@@ -6,14 +6,14 @@ const Label = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  color: ${props => props.theme.cool_grey[300]};
+  color: ${props => props.theme.option};
   font-size: 11px;
   letter-spacing: 1.8px;
   font-weight: 500;
   & hr {
     height: 1px;
     flex-grow: 1;
-    background-color: ${props => props.theme.cool_grey[200]};
+    background-color: ${props => props.theme.option};
     border: none;
   }
 

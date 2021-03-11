@@ -46,6 +46,10 @@ const useStore = create(set => {
     currentTabId: '',
     breakAt: null,
     interval: 5,
+    darkMode: false,
+    setDarkMode: darkMode => {
+      set(() => ({ darkMode }));
+    },
     setActive: active => {
       set(() => ({ active }));
     },
@@ -63,17 +67,18 @@ const useStore = create(set => {
       set(() => ({ interval: interval * 60000 }));
     },
     fetch: async () => {
-      const { active, list, breakAt, interval } = await browser.storage.local.get({
+      const { active, list, breakAt, interval, darkMode } = await browser.storage.local.get({
         active: false,
         list: getStubData(),
         breakAt: dayjs()
           .subtract(1, 'day')
           .toJSON(),
         interval: 5,
+        darkMode: false,
       });
 
-      set({ active, list, interval, breakAt: dayjs(breakAt).toJSON() });
-      return { active, list, interval, breakAt };
+      set({ active, list, interval, breakAt: dayjs(breakAt).toJSON(), darkMode });
+      return { active, list, interval, breakAt, darkMode };
     },
     getCurrentTabId: async () => {
       const tabs = await browser.tabs.query({ active: true, currentWindow: true });

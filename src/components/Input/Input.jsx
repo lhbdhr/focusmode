@@ -3,19 +3,19 @@ import styled from 'styled-components';
 import useAutoFocus from 'hooks/useAutoFocus';
 
 const BaseInput = styled.input`
-  background-color: #f1f5f9;
+  background-color: ${props => props.theme.input.background};
 
   border: none;
   border-radius: 4px;
   height: 35px;
   padding-left: 10px;
-  color: ${props => props.theme.font.secondary};
+  color: ${props => props.theme.input.color};
 
   width: 100%;
   font-size: 14px;
   box-sizing: border-box;
   border: 2px solid transparent;
-  transition: all 0.4s;
+  transition: all 0.01s;
 
   ::placeholder {
     color: ${props => props.theme.cool_grey[400]};
@@ -23,7 +23,7 @@ const BaseInput = styled.input`
 
   :focus {
     border: 2px solid ${props => props.theme.main[500]};
-    background-color: white;
+    /* background-color: white; */
 
     outline: none;
   }

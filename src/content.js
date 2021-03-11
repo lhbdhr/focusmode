@@ -67,7 +67,7 @@ const StyledMenu = styled.div`
 
 const Description = styled.p`
   font-size: 15px;
-  color: ${props => props.theme.font.secondary};
+  color: ${props => props.theme.color.secondary};
 `;
 
 const Heading = styled.h2`
@@ -94,10 +94,6 @@ const Blocked = ({ shouldSync, onCloseTab }) => {
   const handleBreak = () => {
     setBreakAt(new Date());
   };
-
-  // const handleTurnOff = () => {
-  //   setActive(false);
-  // };
 
   return (
     isFocusModeOn && (
@@ -152,6 +148,8 @@ const App = () => {
         dispatch({ type: 'INIT', payload: request.list });
       } else if (request && request.id === 'onBreak') {
         setBreakAt(request.breakAt);
+      } else if (request && request.id === 'onToggleDarkMode') {
+        setDarkMode(request.darkMode);
       }
     });
   }, []);
