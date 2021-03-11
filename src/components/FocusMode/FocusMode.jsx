@@ -10,7 +10,7 @@ import Control from 'components/Control';
 import DateLabel from 'components/DateLabel';
 import Input from 'components/Input';
 import Switch from 'components/Switch';
-import { ADD_LINK, REMOVE_LINK, UPDATE_LINK } from 'context/FocusMode';
+import { ADD_LINK, REMOVE_LINK, UPDATE_LINK } from 'hooks/useStore';
 import useActive from 'hooks/useActive';
 import useList from 'hooks/useList';
 import useBreak from 'hooks/useBreak';
