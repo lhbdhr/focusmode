@@ -23,6 +23,7 @@ import Item from './Item';
 import URL from './URL';
 import BreakButton from 'components/BreakButton';
 import IconWrapper from 'components/IconWrapper';
+import browser from 'webextension-polyfill';
 
 const Text = styled.span`
   flex-grow: 1;
@@ -91,15 +92,22 @@ export default ({ shouldSync }) => {
   const updateItem = payload => dispatch({ type: UPDATE_LINK, payload });
 
   const toggle = () => {
+    if (active) {
+      browser.runtime.sendMessage({ type: 'onInactive' });
+    } else {
+      browser.runtime.sendMessage({ type: 'onActive' });
+    }
     setActive(!active);
   };
 
   const handleBreak = () => {
     setBreakAt(new Date());
+    browser.runtime.sendMessage({ type: 'onBreak' });
   };
 
   const handleResume = () => {
     resetBreakAt();
+    browser.runtime.sendMessage({ type: 'onResume' });
   };
 
   const handleDarkMode = () => {
