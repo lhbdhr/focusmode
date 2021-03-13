@@ -46,7 +46,7 @@ const Div = styled('div')`
     height: 24px;
     padding: 0;
     border-radius: 30px;
-    background-color: #dee4ee;
+    background-color: ${props => props.theme.toggle.off.background};
     -webkit-transition: all 0.2s ease;
     -moz-transition: all 0.2s ease;
     transition: all 0.2s ease;
