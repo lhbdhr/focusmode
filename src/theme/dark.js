@@ -34,6 +34,12 @@ export default {
     background: '#374862',
   },
 
+  toggle: {
+    off: {
+      background: '#374862',
+    },
+  },
+
   darkModeButton: {
     background: '#374862',
     color: 'white',

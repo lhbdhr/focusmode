@@ -20,6 +20,12 @@ export default {
     background: '#dae1fb',
   },
 
+  toggle: {
+    off: {
+      background: '#dee4ee',
+    },
+  },
+
   list: {
     color: '#1F2937',
   },
