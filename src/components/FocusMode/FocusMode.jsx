@@ -17,7 +17,7 @@ import useActive from 'hooks/useActive';
 import useList from 'hooks/useList';
 import useBreak from 'hooks/useBreak';
 import useDarkMode from 'hooks/useDarkMode';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import Item from './Item';
 import URL from './URL';
@@ -113,6 +113,32 @@ export default ({ shouldSync }) => {
   const handleDarkMode = () => {
     setDarkMode(!darkMode);
   };
+
+  useEffect(() => {
+    const isDarkMode =
+      window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+    if (isBreak) {
+      if (isDarkMode) {
+        browser.browserAction.setIcon({ path: './assets/img/coffee-dark-mode.png' });
+      } else {
+        browser.browserAction.setIcon({ path: './assets/img/coffee.png' });
+      }
+    }
+    if (active) {
+      if (isDarkMode) {
+        browser.browserAction.setIcon({ path: './assets/img/circle-dark-mode.png' });
+      } else {
+        browser.browserAction.setIcon({ path: './assets/img/circle.png' });
+      }
+    } else {
+      if (isDarkMode) {
+        browser.browserAction.setIcon({ path: './assets/img/hexagon-dark-mode.png' });
+      } else {
+        browser.browserAction.setIcon({ path: './assets/img/hexagon.png' });
+      }
+    }
+  }, []);
 
   return (
     <Box display="flex" flexDirection="column" height="480px">

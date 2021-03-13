@@ -2,7 +2,11 @@ import 'libs/polyfills';
 import browser from 'webextension-polyfill';
 import { baseURLRegex } from 'constants/regex';
 
+const media = window.matchMedia('(prefers-color-scheme: dark)');
+
 browser.runtime.onMessage.addListener(async (request, sender) => {
+  const isDarkMode = window.matchMedia && media.matches;
+
   if (request.greeting === 'showOptionsPage') {
     browser.runtime.openOptionsPage();
   }
@@ -11,14 +15,32 @@ browser.runtime.onMessage.addListener(async (request, sender) => {
   }
 
   if (request.type == 'onBreak') {
-    chrome.browserAction.setIcon({ path: './assets/img/coffee-48.png' });
+    if (isDarkMode) {
+      return browser.browserAction.setIcon({ path: './assets/img/coffee-dark-mode.png' });
+    }
+    return browser.browserAction.setIcon({ path: './assets/img/coffee.png' });
   }
   if (request.type == 'onResume' || request.type == 'onActive') {
-    chrome.browserAction.setIcon({ path: './assets/img/circle-48.png' });
+    if (isDarkMode) {
+      return browser.browserAction.setIcon({ path: './assets/img/circle-dark-mode.png' });
+    }
+    return browser.browserAction.setIcon({ path: './assets/img/circle.png' });
   }
   if (request.type == 'onInactive') {
-    chrome.browserAction.setIcon({ path: './assets/img/hexagon-48.png' });
+    if (isDarkMode) {
+      return browser.browserAction.setIcon({ path: './assets/img/hexagon-dark-mode.png' });
+    }
+    return browser.browserAction.setIcon({ path: './assets/img/hexagon.png' });
   }
+});
+
+browser.runtime.onInstalled.addListener(function() {
+  const isDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+  if (isDarkMode) {
+    return browser.browserAction.setIcon({ path: './assets/img/hexagon-dark-mode.png' });
+  }
+  return browser.browserAction.setIcon({ path: './assets/img/hexagon.png' });
 });
 
 browser.tabs.onActivated.addListener(async function(activeInfo) {
