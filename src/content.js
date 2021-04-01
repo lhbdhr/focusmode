@@ -98,10 +98,8 @@ const Blocked = ({ shouldSync, onCloseTab }) => {
 
   const handleBreak = () => {
     setBreakAt(new Date());
-    browser.runtime.sendMessage({
-      command: 'start-timer',
-      interval,
-    });
+
+    browser.runtime.sendMessage({ type: 'onBreak', interval });
   };
 
   return (

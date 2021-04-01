@@ -11,13 +11,22 @@ let remainingTime;
 
 browser.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
   const tabs = await browser.tabs.query({ currentWindow: true, active: true });
+  const media = window.matchMedia('(prefers-color-scheme: dark)');
+
+  const isDarkMode = window.matchMedia && media.matches;
+
   if (request.greeting === 'showOptionsPage') {
     browser.runtime.openOptionsPage();
   }
   if (request.type == 'closeTab') {
+    browser.tabs.remove(sender.tab.id);
   }
 
-  if (request.command === 'start-timer') {
+  if (request.command === 'get-time') {
+    sendResponse({ time: remainingTime });
+  }
+
+  if (request.type == 'onBreak') {
     const countdown = minutes => {
       const now = new Date().getTime();
 
@@ -58,15 +67,23 @@ browser.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
 
     countdown(request.interval);
   }
-
-  if (request.command === 'reset-timer') {
+  if (request.type == 'onResume') {
     clearInterval(intervalID);
     browser.browserAction.setBadgeText({ text: '' });
+    if (isDarkMode) {
+      return browser.browserAction.setIcon({ path: './assets/img/circle-dark-mode.png' });
+    }
+    return browser.browserAction.setIcon({ path: './assets/img/circle.png' });
   }
+});
 
-  if (request.command === 'get-time') {
-    sendResponse({ time: remainingTime });
+browser.runtime.onInstalled.addListener(function() {
+  const isDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+  if (isDarkMode) {
+    return browser.browserAction.setIcon({ path: './assets/img/circle-dark-mode.png' });
   }
+  return browser.browserAction.setIcon({ path: './assets/img/circle.png' });
 });
 
 browser.tabs.onActivated.addListener(async function(activeInfo) {

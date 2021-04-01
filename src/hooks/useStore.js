@@ -44,9 +44,11 @@ const useStore = create(set => {
     active: false,
     list: [],
     currentTabId: '',
-    breakAt: null,
-    interval: 5,
-    darkMode: false,
+    breakAt: dayjs()
+      .subtract(1, 'day')
+      .toJSON(),
+    interval: 0.1,
+    darkMode: window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches,
     setDarkMode: darkMode => {
       set(() => ({ darkMode }));
     },
@@ -73,8 +75,8 @@ const useStore = create(set => {
         breakAt: dayjs()
           .subtract(1, 'day')
           .toJSON(),
-        interval: 5,
-        darkMode: false,
+        interval: 0.1,
+        darkMode: window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches,
       });
 
       set({ active, list, interval, breakAt: dayjs(breakAt).toJSON(), darkMode });
