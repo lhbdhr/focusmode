@@ -23,6 +23,8 @@ import Item from './Item';
 import URL from './URL';
 import BreakButton from 'components/BreakButton';
 import IconWrapper from 'components/IconWrapper';
+import browser from 'webextension-polyfill';
+import dayjs from 'dayjs';
 
 const Text = styled.span`
   flex-grow: 1;
@@ -95,11 +97,21 @@ export default ({ shouldSync }) => {
   };
 
   const handleBreak = () => {
-    setBreakAt(new Date());
+    const now = new Date();
+    setBreakAt(now);
+
+    browser.runtime.sendMessage({
+      command: 'start-timer',
+      interval,
+    });
   };
 
   const handleResume = () => {
     resetBreakAt();
+
+    browser.runtime.sendMessage({
+      command: 'reset-timer',
+    });
   };
 
   const handleDarkMode = () => {

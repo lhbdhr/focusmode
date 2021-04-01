@@ -1,7 +1,7 @@
 import globalStyle from 'assets/styles/global';
 import { ThemeProvider } from 'context/Theme';
 import 'libs/polyfills';
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import ReactDOM from 'react-dom';
 import styled, { createGlobalStyle, StyleSheetManager } from 'styled-components';
 import browser from 'webextension-polyfill';
@@ -98,6 +98,10 @@ const Blocked = ({ shouldSync, onCloseTab }) => {
 
   const handleBreak = () => {
     setBreakAt(new Date());
+    browser.runtime.sendMessage({
+      command: 'start-timer',
+      interval,
+    });
   };
 
   return (
@@ -132,8 +136,16 @@ const Blocked = ({ shouldSync, onCloseTab }) => {
   );
 };
 
+let shouldActive;
+
+browser.runtime.onMessage.addListener(function(request) {
+  if (request && request.command === 'resume-focus-mode') {
+    shouldActive = request.shouldActive;
+  }
+});
+
 const App = () => {
-  const { fetch, dispatch, setActive, setBreakAt, darkMode, setDarkMode } = useStore();
+  const { fetch, dispatch, setActive, setBreakAt, darkMode, setDarkMode, active } = useStore();
 
   const initRef = useRef(null);
 
@@ -155,9 +167,20 @@ const App = () => {
         setBreakAt(request.breakAt);
       } else if (request && request.id === 'onToggleDarkMode') {
         setDarkMode(request.darkMode);
+      } else if (request && request.command === 'resume-focus-mode') {
+        setActive(false);
       }
     });
   }, []);
+
+  useEffect(() => {
+    console.log('2222');
+
+    if (shouldActive && !active) {
+      console.log('x');
+      setActive(shouldActive);
+    }
+  });
 
   useEffect(() => {
     fetch();

@@ -6,6 +6,7 @@ import { ThemeProvider } from 'context/Theme';
 import Container from 'components/Container';
 import useStore from 'hooks/useStore';
 import lazy from 'preact-lazy';
+import browser from 'webextension-polyfill';
 
 const FocusMode = lazy(() => import('components/FocusMode'));
 
@@ -24,6 +25,16 @@ const Popup = () => {
     fetch();
     getCurrentTabId();
     initRef.current = true;
+
+    const getTime = async () => {
+      const response = await browser.runtime.sendMessage({ command: 'get-time' });
+
+      if (response && response.time) {
+        console.log({ time: response.time });
+      }
+    };
+
+    getTime();
   }, []);
 
   return (
