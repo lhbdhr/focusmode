@@ -172,10 +172,7 @@ const App = () => {
   }, []);
 
   useEffect(() => {
-    console.log('2222');
-
     if (shouldActive && !active) {
-      console.log('x');
       setActive(shouldActive);
     }
   });

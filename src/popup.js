@@ -20,21 +20,21 @@ const GlobalStyle = createGlobalStyle`
 
 const Popup = () => {
   const initRef = useRef(null);
-  const { fetch, getCurrentTabId, darkMode } = useStore();
+  const { fetch, getCurrentTabId, darkMode, setActive, active } = useStore();
   useEffect(() => {
     fetch();
     getCurrentTabId();
     initRef.current = true;
 
-    const getTime = async () => {
-      const response = await browser.runtime.sendMessage({ command: 'get-time' });
+    // const getTime = async () => {
+    //   const response = await browser.runtime.sendMessage({ command: 'get-time' });
 
-      if (response && response.time) {
-        console.log({ time: response.time });
-      }
-    };
+    //   if (response && response.time) {
+    //     console.log({ time: response.time });
+    //   }
+    // };
 
-    getTime();
+    // getTime();
   }, []);
 
   return (

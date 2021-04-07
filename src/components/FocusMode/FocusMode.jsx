@@ -24,7 +24,6 @@ import URL from './URL';
 import BreakButton from 'components/BreakButton';
 import IconWrapper from 'components/IconWrapper';
 import browser from 'webextension-polyfill';
-import dayjs from 'dayjs';
 
 const Text = styled.span`
   flex-grow: 1;
