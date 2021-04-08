@@ -31,6 +31,7 @@
   },
   "dependencies": {
     "@styled-system/prop-types": "^5.1.5",
+    "@use-it/interval": "^1.0.0",
     "core-js": "^3.8.3",
     "dayjs": "^1.10.4",
     "lodash.debounce": "^4.0.8",
@@ -45,6 +46,7 @@
     "styled-icons": "^10.26.0",
     "styled-system": "^5.1.5",
     "webextension-polyfill": "^0.7.0",
+    "yarn": "^1.22.10",
     "zustand": "^3.3.1"
   }
 }

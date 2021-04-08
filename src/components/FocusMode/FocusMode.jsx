@@ -24,6 +24,7 @@ import URL from './URL';
 import BreakButton from 'components/BreakButton';
 import IconWrapper from 'components/IconWrapper';
 import browser from 'webextension-polyfill';
+import useInterval from '@use-it/interval';
 
 const Text = styled.span`
   flex-grow: 1;
@@ -69,7 +70,34 @@ const Description = styled.p`
   line-height: 1.8;
 `;
 
-export default ({ shouldSync }) => {
+const Timer = ({ target, resetBreakAt }) => {
+  const [timeLeft, setTimeLeft] = useState('');
+  const [interval, setInterval] = useState(0);
+  console.log('timer', { timeLeft, target });
+
+  useInterval(() => {
+    if (target) {
+      setInterval(500);
+      const remaining = (new Date(target) - new Date()) / 1000;
+
+      const minutes = ~~(remaining / 60);
+      const seconds = ~~(remaining % 60);
+
+      const timeLeft = `${minutes}:${('00' + seconds).slice(-2)}`;
+
+      setTimeLeft(timeLeft);
+
+      if (remaining < 0) {
+        setInterval(null);
+        resetBreakAt(); // stop the timer
+      }
+    }
+  }, interval);
+
+  return <Description>{timeLeft}</Description>;
+};
+
+export default ({ shouldSync, target, setTarget }) => {
   const [url, setURL] = useState('');
 
   const { list, dispatch } = useList({ shouldSync });
@@ -100,19 +128,31 @@ export default ({ shouldSync }) => {
     setActive(!active);
   };
 
-  const handleBreak = () => {
+  const handleBreak = async () => {
+    // const getTime = async () => {
+    //   const response = await browser.runtime.sendMessage({ command: 'get-time' });
+    //   console.log('from bg handlebreak', { target: response.target });
+    //   if (response && response.target) {
+    //     setTarget(response.target);
+    //   }
+    // };
+
     const now = new Date();
     setBreakAt(now);
 
-    browser.runtime.sendMessage({
+    const target = await browser.runtime.sendMessage({
       type: 'onBreak',
       interval,
     });
+    console.log({ target });
+    setTarget(target);
+
+    // getTime();
   };
 
   const handleResume = () => {
     resetBreakAt();
-
+    setTarget(undefined);
     browser.runtime.sendMessage({
       type: 'onResume',
     });
@@ -122,32 +162,32 @@ export default ({ shouldSync }) => {
     setDarkMode(!darkMode);
   };
 
-  useEffect(() => {
-    const isDarkMode =
-      window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+  // useEffect(() => {
+  // const isDarkMode =
+  //   window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
 
-    // if (isBreak) {
-    //   if (isDarkMode) {
-    //     browser.browserAction.setIcon({ path: './assets/img/coffee-dark-mode.png' });
-    //   } else {
-    //     browser.browserAction.setIcon({ path: './assets/img/coffee.png' });
-    //   }
-    // }
-    // if (active) {
-    //   if (isDarkMode) {
-    //     browser.browserAction.setIcon({ path: './assets/img/circle-dark-mode.png' });
-    //   } else {
-    //     browser.browserAction.setIcon({ path: './assets/img/circle.png' });
-    //   }
-    // } else {
-    //   if (isDarkMode) {
-    //     browser.browserAction.setIcon({ path: './assets/img/hexagon-dark-mode.png' });
-    //   } else {
-    //     browser.browserAction.setIcon({ path: './assets/img/hexagon.png' });
-    //   }
-    // }
-  }, []);
-
+  // if (isBreak) {
+  //   if (isDarkMode) {
+  //     browser.browserAction.setIcon({ path: './assets/img/coffee-dark-mode.png' });
+  //   } else {
+  //     browser.browserAction.setIcon({ path: './assets/img/coffee.png' });
+  //   }
+  // }
+  // if (active) {
+  //   if (isDarkMode) {
+  //     browser.browserAction.setIcon({ path: './assets/img/circle-dark-mode.png' });
+  //   } else {
+  //     browser.browserAction.setIcon({ path: './assets/img/circle.png' });
+  //   }
+  // } else {
+  //   if (isDarkMode) {
+  //     browser.browserAction.setIcon({ path: './assets/img/hexagon-dark-mode.png' });
+  //   } else {
+  //     browser.browserAction.setIcon({ path: './assets/img/hexagon.png' });
+  //   }
+  // }
+  // }, []);
+  console.log('FocusMode', { target });
   return (
     <Box display="flex" flexDirection="column" height="480px">
       <Box display="flex" justifyContent="space-between">
@@ -181,6 +221,9 @@ export default ({ shouldSync }) => {
                     : 'Focus mode is on'
                   : 'Focus mode is off'}
               </Heading>
+              {isBreak && (
+                <Timer target={target} resetBreakAt={resetBreakAt} setTarget={setTarget} />
+              )}
             </Box>
             {!isBreak && <Switch onChange={toggle} checked={active} />}
           </Box>

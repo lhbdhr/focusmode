@@ -97,9 +97,14 @@ const Blocked = ({ shouldSync, onCloseTab }) => {
   const { isFocusModeOn } = useFocusMode({ isActive: active, list, isBreak, breakAt });
 
   const handleBreak = () => {
-    setBreakAt(new Date());
+    const now = new Date();
 
-    browser.runtime.sendMessage({ type: 'onBreak', interval });
+    setBreakAt(now);
+
+    browser.runtime.sendMessage({
+      type: 'onBreak',
+      interval,
+    });
   };
 
   return (

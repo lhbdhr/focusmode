@@ -1,5 +1,5 @@
 import 'libs/polyfills';
-import React, { useEffect, useRef, Suspense } from 'react';
+import React, { useEffect, useRef, Suspense, useState } from 'react';
 import ReactDOM from 'react-dom';
 import { createGlobalStyle } from 'styled-components';
 import { ThemeProvider } from 'context/Theme';
@@ -20,29 +20,34 @@ const GlobalStyle = createGlobalStyle`
 
 const Popup = () => {
   const initRef = useRef(null);
-  const { fetch, getCurrentTabId, darkMode, setActive, active } = useStore();
+  const { fetch, getCurrentTabId, darkMode, setActive, active, interval, isBreak } = useStore();
+
+  const [target, setTarget] = useState(undefined);
+
   useEffect(() => {
     fetch();
     getCurrentTabId();
     initRef.current = true;
 
     // const getTime = async () => {
-    //   const response = await browser.runtime.sendMessage({ command: 'get-time' });
-
-    //   if (response && response.time) {
-    //     console.log({ time: response.time });
+    //   const response = await browser.runtime.sendMessage({ command: 'get-time', interval });
+    //   console.log('from bg', { target: response.target });
+    //   if (response && response.target) {
+    //     setTarget(response.target);
     //   }
     // };
 
     // getTime();
   }, []);
 
+  // useEffect(() => {}, [isBreak]);
+
   return (
     <ThemeProvider darkMode={darkMode}>
       <GlobalStyle />
       <Container>
         <Suspense fallback={<div>Loading...</div>}>
-          <FocusMode shouldSync={initRef.current} />
+          <FocusMode shouldSync={initRef.current} target={target} setTarget={setTarget} />
         </Suspense>
       </Container>
     </ThemeProvider>

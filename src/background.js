@@ -7,9 +7,8 @@ import duration from 'dayjs/plugin/duration';
 dayjs.extend(duration);
 
 let intervalID;
-let remainingTime;
 
-browser.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
+browser.runtime.onMessage.addListener(async (request, sender) => {
   const tabs = await browser.tabs.query({ currentWindow: true, active: true });
   const media = window.matchMedia('(prefers-color-scheme: dark)');
 
@@ -22,26 +21,20 @@ browser.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
     browser.tabs.remove(sender.tab.id);
   }
 
-  if (request.command === 'get-time') {
-    sendResponse({ time: remainingTime });
-  }
-
   if (request.type == 'onBreak') {
-    const countdown = minutes => {
-      const now = new Date().getTime();
+    const tabId = tabs[0].id;
 
-      const target = new Date(now + minutes * 1000 * 60 + 500);
+    const now = new Date();
 
+    const target = new Date(now.getTime() + request.interval * 1000 * 60 + 500);
+
+    const countdown = () => {
       intervalID = setInterval(function() {
         const now = new Date();
 
-        const remaining = (target - now) / 1000;
-
-        remainingTime = remaining;
+        const remaining = (new Date(target) - now) / 1000;
 
         if (remaining < 0) {
-          const tabId = tabs[0].id;
-
           browser.tabs.sendMessage(tabId, {
             command: 'resume-focus-mode',
             shouldActive: true,
@@ -64,9 +57,15 @@ browser.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
         }
       }, 100);
     };
+    countdown();
 
-    countdown(request.interval);
+    return Promise.resolve(target);
   }
+
+  // if (request.command == 'get-time') {
+  //   return Promise.resolve({ target: '' });
+  // }
+
   if (request.type == 'onResume') {
     clearInterval(intervalID);
     browser.browserAction.setBadgeText({ text: '' });
