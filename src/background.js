@@ -7,6 +7,7 @@ import duration from 'dayjs/plugin/duration';
 dayjs.extend(duration);
 
 let intervalID;
+let targetEnd;
 
 browser.runtime.onMessage.addListener(async (request, sender) => {
   const tabs = await browser.tabs.query({ currentWindow: true, active: true });
@@ -26,8 +27,8 @@ browser.runtime.onMessage.addListener(async (request, sender) => {
 
     const now = new Date();
 
-    const target = new Date(now.getTime() + request.interval * 1000 * 60 + 500);
-
+    const target = new Date(now.getTime() + request.interval * 1000 * 60 + 500).toISOString();
+    targetEnd = target;
     const countdown = () => {
       intervalID = setInterval(function() {
         const now = new Date();
@@ -62,9 +63,9 @@ browser.runtime.onMessage.addListener(async (request, sender) => {
     return Promise.resolve(target);
   }
 
-  // if (request.command == 'get-time') {
-  //   return Promise.resolve({ target: '' });
-  // }
+  if (request.command == 'get-time') {
+    return Promise.resolve({ target: targetEnd });
+  }
 
   if (request.type == 'onResume') {
     clearInterval(intervalID);

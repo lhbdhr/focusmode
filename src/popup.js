@@ -20,7 +20,7 @@ const GlobalStyle = createGlobalStyle`
 
 const Popup = () => {
   const initRef = useRef(null);
-  const { fetch, getCurrentTabId, darkMode, setActive, active, interval, isBreak } = useStore();
+  const { fetch, getCurrentTabId, darkMode, interval } = useStore();
 
   const [target, setTarget] = useState(undefined);
 
@@ -29,18 +29,16 @@ const Popup = () => {
     getCurrentTabId();
     initRef.current = true;
 
-    // const getTime = async () => {
-    //   const response = await browser.runtime.sendMessage({ command: 'get-time', interval });
-    //   console.log('from bg', { target: response.target });
-    //   if (response && response.target) {
-    //     setTarget(response.target);
-    //   }
-    // };
+    const getTime = async () => {
+      const response = await browser.runtime.sendMessage({ command: 'get-time', interval });
 
-    // getTime();
+      if (response && response.target) {
+        setTarget(response.target);
+      }
+    };
+
+    getTime();
   }, []);
-
-  // useEffect(() => {}, [isBreak]);
 
   return (
     <ThemeProvider darkMode={darkMode}>

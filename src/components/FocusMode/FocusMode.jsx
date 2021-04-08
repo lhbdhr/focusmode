@@ -77,7 +77,7 @@ const Timer = ({ target, resetBreakAt }) => {
 
   useInterval(() => {
     if (target) {
-      setInterval(500);
+      setInterval(100);
       const remaining = (new Date(target) - new Date()) / 1000;
 
       const minutes = ~~(remaining / 60);
