@@ -20,9 +20,7 @@ const GlobalStyle = createGlobalStyle`
 
 const Popup = () => {
   const initRef = useRef(null);
-  const { fetch, getCurrentTabId, darkMode, interval } = useStore();
-
-  const [target, setTarget] = useState(undefined);
+  const { fetch, getCurrentTabId, darkMode, interval, target, setTarget } = useStore();
 
   useEffect(() => {
     fetch();

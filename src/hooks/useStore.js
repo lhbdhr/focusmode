@@ -47,7 +47,8 @@ const useStore = create(set => {
     breakAt: dayjs()
       .subtract(1, 'day')
       .toJSON(),
-    interval: 0.2,
+    interval: 0.1,
+    target: undefined,
     darkMode: window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches,
     setDarkMode: darkMode => {
       set(() => ({ darkMode }));
@@ -57,6 +58,9 @@ const useStore = create(set => {
     },
     setBreakAt: breakAt => {
       set(() => ({ breakAt }));
+    },
+    setTarget: target => {
+      set(() => ({ target }));
     },
     resetBreakAt: () => {
       set(() => ({
@@ -75,7 +79,7 @@ const useStore = create(set => {
         breakAt: dayjs()
           .subtract(1, 'day')
           .toJSON(),
-        interval: 0.2,
+        interval: 0.1,
         darkMode: window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches,
       });
 

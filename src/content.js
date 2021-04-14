@@ -91,20 +91,22 @@ const Flex = styled.div`
 const Blocked = ({ shouldSync, onCloseTab }) => {
   const { list } = useList({ shouldSync });
   const { active } = useActive({ shouldSync });
-  const { setBreakAt, breakAt, isBreak, interval } = useBreak({ shouldSync });
+  const { setBreakAt, breakAt, isBreak, interval, setTarget } = useBreak({ shouldSync });
   const { darkMode } = useDarkMode({ shouldSync });
 
   const { isFocusModeOn } = useFocusMode({ isActive: active, list, isBreak, breakAt });
 
-  const handleBreak = () => {
+  const handleBreak = async () => {
     const now = new Date();
 
     setBreakAt(now);
 
-    browser.runtime.sendMessage({
+    const target = await browser.runtime.sendMessage({
       type: 'onBreak',
       interval,
     });
+    console.log({ target });
+    setTarget(target);
   };
 
   return (

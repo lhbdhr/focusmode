@@ -109,13 +109,21 @@ const Timer = ({ target, resetBreakAt, setTarget }) => {
   return <TimerText>{timeLeft}</TimerText>;
 };
 
-export default ({ shouldSync, target, setTarget }) => {
+export default ({ shouldSync }) => {
   const [url, setURL] = useState('');
 
   const { list, dispatch } = useList({ shouldSync });
   const { setActive, active } = useActive({ shouldSync });
   const { setDarkMode, darkMode } = useDarkMode({ shouldSync });
-  const { setBreakAt, isBreak, resetBreakAt, interval, remainingTime } = useBreak({
+  const {
+    setBreakAt,
+    isBreak,
+    resetBreakAt,
+    interval,
+    remainingTime,
+    target,
+    setTarget,
+  } = useBreak({
     shouldSync,
   });
 
@@ -174,31 +182,31 @@ export default ({ shouldSync, target, setTarget }) => {
     setDarkMode(!darkMode);
   };
 
-  useEffect(() => {
-    const isDarkMode =
-      window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+  // useEffect(() => {
+  //   const isDarkMode =
+  //     window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
 
-    if (isBreak) {
-      if (isDarkMode) {
-        browser.browserAction.setIcon({ path: './assets/img/coffee-dark-mode.png' });
-      } else {
-        browser.browserAction.setIcon({ path: './assets/img/coffee.png' });
-      }
-    }
-    if (active) {
-      if (isDarkMode) {
-        browser.browserAction.setIcon({ path: './assets/img/circle-dark-mode.png' });
-      } else {
-        browser.browserAction.setIcon({ path: './assets/img/circle.png' });
-      }
-    } else {
-      if (isDarkMode) {
-        browser.browserAction.setIcon({ path: './assets/img/hexagon-dark-mode.png' });
-      } else {
-        browser.browserAction.setIcon({ path: './assets/img/hexagon.png' });
-      }
-    }
-  }, []);
+  //   if (isBreak) {
+  //     if (isDarkMode) {
+  //       browser.browserAction.setIcon({ path: './assets/img/coffee-dark-mode.png' });
+  //     } else {
+  //       browser.browserAction.setIcon({ path: './assets/img/coffee.png' });
+  //     }
+  //   }
+  //   if (active) {
+  //     if (isDarkMode) {
+  //       browser.browserAction.setIcon({ path: './assets/img/circle-dark-mode.png' });
+  //     } else {
+  //       browser.browserAction.setIcon({ path: './assets/img/circle.png' });
+  //     }
+  //   } else {
+  //     if (isDarkMode) {
+  //       browser.browserAction.setIcon({ path: './assets/img/hexagon-dark-mode.png' });
+  //     } else {
+  //       browser.browserAction.setIcon({ path: './assets/img/hexagon.png' });
+  //     }
+  //   }
+  // }, []);
   console.log('FocusMode', { target });
   return (
     <Box display="flex" flexDirection="column" height="520px">
@@ -289,7 +297,8 @@ export default ({ shouldSync, target, setTarget }) => {
         <IconButton onClick={handleDarkMode}>
           {darkMode ? (
             <>
-              <SunIcon size={16} strokeWidth={1.8} /> <Text>Light Mode</Text>
+              <SunIcon size={16} strokeWidth={1.8} />
+              <Text>Light Mode</Text>
             </>
           ) : (
             <>

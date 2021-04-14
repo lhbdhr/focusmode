@@ -6,7 +6,15 @@ import relativeTime from 'dayjs/plugin/relativeTime';
 dayjs.extend(relativeTime);
 
 export default function useBreak({ shouldSync = false }) {
-  const { setBreakAt, breakAt: breakAtJSON, interval, resetBreakAt, currentTabId } = useStore();
+  const {
+    setBreakAt,
+    breakAt: breakAtJSON,
+    interval,
+    resetBreakAt,
+    currentTabId,
+    target,
+    setTarget,
+  } = useStore();
 
   const breakAt = dayjs(breakAtJSON).toDate();
 
@@ -56,5 +64,7 @@ export default function useBreak({ shouldSync = false }) {
     interval,
     endTime,
     remainingTime,
+    target,
+    setTarget,
   };
 }
