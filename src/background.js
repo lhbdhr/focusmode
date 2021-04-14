@@ -70,10 +70,10 @@ browser.runtime.onMessage.addListener(async (request, sender) => {
   if (request.type == 'onResume') {
     clearInterval(intervalID);
     browser.browserAction.setBadgeText({ text: '' });
-    // if (isDarkMode) {
-    //   return browser.browserAction.setIcon({ path: './assets/img/circle-dark-mode.png' });
-    // }
-    // return browser.browserAction.setIcon({ path: './assets/img/circle.png' });
+    if (isDarkMode) {
+      return browser.browserAction.setIcon({ path: './assets/img/circle-dark-mode.png' });
+    }
+    return browser.browserAction.setIcon({ path: './assets/img/circle.png' });
   }
 });
 
