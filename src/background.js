@@ -36,10 +36,10 @@ browser.runtime.onMessage.addListener(async (request, sender) => {
         const remaining = (new Date(target) - now) / 1000;
 
         if (remaining < 0) {
-          browser.tabs.sendMessage(tabId, {
-            command: 'resume-focus-mode',
-            shouldActive: true,
-          });
+          // browser.tabs.sendMessage(tabId, {
+          //   command: 'resume-focus-mode',
+          //   shouldActive: true,
+          // });
 
           browser.browserAction.setBadgeText({ text: '' });
           clearInterval(intervalID);
@@ -70,10 +70,10 @@ browser.runtime.onMessage.addListener(async (request, sender) => {
   if (request.type == 'onResume') {
     clearInterval(intervalID);
     browser.browserAction.setBadgeText({ text: '' });
-    if (isDarkMode) {
-      return browser.browserAction.setIcon({ path: './assets/img/circle-dark-mode.png' });
-    }
-    return browser.browserAction.setIcon({ path: './assets/img/circle.png' });
+    // if (isDarkMode) {
+    //   return browser.browserAction.setIcon({ path: './assets/img/circle-dark-mode.png' });
+    // }
+    // return browser.browserAction.setIcon({ path: './assets/img/circle.png' });
   }
 });
 

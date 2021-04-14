@@ -70,7 +70,18 @@ const Description = styled.p`
   line-height: 1.8;
 `;
 
-const Timer = ({ target, resetBreakAt }) => {
+const TimerText = styled.p`
+  font-size: 16px;
+  font-weight: 500;
+  color: ${props => props.theme.description};
+  margin-top: 0;
+  margin-bottom: 12px;
+  line-height: 1.8;
+  text-align: center;
+  margin-left: 4px;
+`;
+
+const Timer = ({ target, resetBreakAt, setTarget }) => {
   const [timeLeft, setTimeLeft] = useState('');
   const [interval, setInterval] = useState(0);
   console.log('timer', { timeLeft, target });
@@ -90,11 +101,12 @@ const Timer = ({ target, resetBreakAt }) => {
       if (remaining < 0) {
         setInterval(null);
         resetBreakAt(); // stop the timer
+        setTarget(undefined);
       }
     }
   }, interval);
 
-  return <Description>{timeLeft}</Description>;
+  return <TimerText>{timeLeft}</TimerText>;
 };
 
 export default ({ shouldSync, target, setTarget }) => {
@@ -189,7 +201,7 @@ export default ({ shouldSync, target, setTarget }) => {
   // }, []);
   console.log('FocusMode', { target });
   return (
-    <Box display="flex" flexDirection="column" height="480px">
+    <Box display="flex" flexDirection="column" height="520px">
       <Box display="flex" justifyContent="space-between">
         <Box width="100%">
           <Box
@@ -221,22 +233,23 @@ export default ({ shouldSync, target, setTarget }) => {
                     : 'Focus mode is on'
                   : 'Focus mode is off'}
               </Heading>
-              {isBreak && (
-                <Timer target={target} resetBreakAt={resetBreakAt} setTarget={setTarget} />
-              )}
             </Box>
             {!isBreak && <Switch onChange={toggle} checked={active} />}
           </Box>
 
           {active ? (
             isBreak ? (
-              <Description>Focus mode will resume {remainingTime}.</Description>
+              <Box display="flex" width="100%" alignItems="baseline">
+                <Description>Focus mode will resume in</Description>
+                <Timer target={target} resetBreakAt={resetBreakAt} setTarget={setTarget} />{' '}
+              </Box>
             ) : (
               <Description>Distracting websites are now blocked</Description>
             )
           ) : (
             <Description>Turn on to block distracting websites</Description>
           )}
+
           {isBreak ? (
             <BreakButton onClick={handleResume} fontSize="12px">
               Resume now
@@ -250,6 +263,7 @@ export default ({ shouldSync, target, setTarget }) => {
           )}
         </Box>
       </Box>
+
       <Box mb={3} mt={4}>
         <DateLabel>OPTIONS</DateLabel>
       </Box>

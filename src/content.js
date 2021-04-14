@@ -139,13 +139,13 @@ const Blocked = ({ shouldSync, onCloseTab }) => {
   );
 };
 
-let shouldActive;
+// let shouldActive;
 
-browser.runtime.onMessage.addListener(function(request) {
-  if (request && request.command === 'resume-focus-mode') {
-    shouldActive = request.shouldActive;
-  }
-});
+// browser.runtime.onMessage.addListener(function(request) {
+//   if (request && request.command === 'resume-focus-mode') {
+//     shouldActive = request.shouldActive;
+//   }
+// });
 
 const App = () => {
   const { fetch, dispatch, setActive, setBreakAt, darkMode, setDarkMode, active } = useStore();
@@ -170,17 +170,18 @@ const App = () => {
         setBreakAt(request.breakAt);
       } else if (request && request.id === 'onToggleDarkMode') {
         setDarkMode(request.darkMode);
-      } else if (request && request.command === 'resume-focus-mode') {
-        setActive(false);
       }
+      // else if (request && request.command === 'resume-focus-mode') {
+      //   setActive(false);
+      // }
     });
   }, []);
 
-  useEffect(() => {
-    if (shouldActive && !active) {
-      setActive(shouldActive);
-    }
-  });
+  // useEffect(() => {
+  //   if (shouldActive && !active) {
+  //     setActive(shouldActive);
+  //   }
+  // });
 
   useEffect(() => {
     fetch();
