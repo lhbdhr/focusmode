@@ -3,14 +3,14 @@ import { useEffect } from 'react';
 import browser from 'webextension-polyfill';
 
 export default function useActive({ shouldSync = false }) {
-  const { active, setActive, currentTabId, resetBreakAt } = useStore();
+  const { active, setActive, currentTabId, setIsBreak } = useStore();
 
   // Syncing with storage after data changed
   useEffect(() => {
     if (shouldSync) {
       browser.storage.local.set({ active });
       if (!active) {
-        resetBreakAt();
+        setIsBreak(false);
       }
       if (currentTabId) {
         browser.tabs.sendMessage(currentTabId, {

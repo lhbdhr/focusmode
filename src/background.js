@@ -23,7 +23,7 @@ browser.runtime.onMessage.addListener(async (request, sender) => {
   }
 
   if (request.type == 'onBreak') {
-    const tabId = tabs[0].id;
+    // const tabId = tabs[0].id;
 
     const now = new Date();
 
@@ -77,13 +77,33 @@ browser.runtime.onMessage.addListener(async (request, sender) => {
   }
 });
 
-browser.runtime.onInstalled.addListener(function() {
+browser.runtime.onInstalled.addListener(async function() {
   const isDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
 
   if (isDarkMode) {
-    return browser.browserAction.setIcon({ path: './assets/img/circle-dark-mode.png' });
+    browser.browserAction.setIcon({ path: './assets/img/circle-dark-mode.png' });
+  } else {
+    browser.browserAction.setIcon({ path: './assets/img/circle.png' });
   }
-  return browser.browserAction.setIcon({ path: './assets/img/circle.png' });
+
+  const tabs = await browser.tabs.query({ currentWindow: true, active: true });
+  const [baseURL] = tabs[0].url.match(baseURLRegex);
+
+  const tabId = tabs[0].id;
+
+  if (baseURL) {
+    const { list, active, isBreak } = await browser.storage.local.get();
+    try {
+      browser.tabs.sendMessage(tabId, {
+        isBreak,
+        active,
+        list,
+        id: 'fromBackground',
+      });
+    } catch (error) {
+      return false;
+    }
+  }
 });
 
 browser.tabs.onActivated.addListener(async function(activeInfo) {
@@ -91,11 +111,11 @@ browser.tabs.onActivated.addListener(async function(activeInfo) {
   const [baseURL] = tabs[0].url.match(baseURLRegex);
 
   if (baseURL) {
-    const { list, active, breakAt } = await browser.storage.local.get();
+    const { list, active, isBreak } = await browser.storage.local.get();
 
     try {
       browser.tabs.sendMessage(activeInfo.tabId, {
-        breakAt,
+        isBreak,
         active,
         list,
         id: 'fromBackground',
@@ -111,10 +131,10 @@ browser.tabs.onUpdated.addListener(async (tabId, change, tab) => {
   if (tab.active && change.url) {
     const [baseURL] = change.url.match(baseURLRegex);
     if (baseURL) {
-      const { list, active, breakAt } = await browser.storage.local.get();
+      const { list, active, isBreak } = await browser.storage.local.get();
       try {
         browser.tabs.sendMessage(tabId, {
-          breakAt,
+          isBreak,
           active,
           list,
           id: 'fromBackground',

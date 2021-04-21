@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { baseURLRegex } from 'constants/regex';
 
-const useFocusMode = ({ list, isActive, isBreak, breakAt }) => {
+const useFocusMode = ({ list, isActive, isBreak }) => {
   const [baseURL] = window.location.href.match(baseURLRegex);
   const isFocusModeOn = useMemo(() => {
     const pausedURL = list.map(({ url }) => {
@@ -11,12 +11,14 @@ const useFocusMode = ({ list, isActive, isBreak, breakAt }) => {
 
     const isPause = pausedURL.includes(baseURL);
 
-    if (breakAt) {
-      return isPause && isActive && !isBreak;
-    }
+    // if (isBreak) {
+    //   return isPause && isActive && !isBreak;
+    // }
 
-    return isPause && isActive;
-  }, [isActive, list, breakAt, isBreak]);
+    console.log({ isActive, isPause, isBreak });
+
+    return isPause && isActive && !isBreak;
+  }, [isActive, list, isBreak]);
 
   return { isFocusModeOn, baseURL };
 };

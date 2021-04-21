@@ -91,15 +91,15 @@ const Flex = styled.div`
 const Blocked = ({ shouldSync, onCloseTab }) => {
   const { list } = useList({ shouldSync });
   const { active } = useActive({ shouldSync });
-  const { setBreakAt, breakAt, isBreak, interval, setTarget } = useBreak({ shouldSync });
+  const { setIsBreak, isBreak, interval, setTarget } = useBreak({ shouldSync });
   const { darkMode } = useDarkMode({ shouldSync });
 
-  const { isFocusModeOn } = useFocusMode({ isActive: active, list, isBreak, breakAt });
+  const { isFocusModeOn } = useFocusMode({ isActive: active, list, isBreak });
 
   const handleBreak = async () => {
-    const now = new Date();
+    // const now = new Date();
 
-    setBreakAt(now);
+    setIsBreak(true);
 
     const target = await browser.runtime.sendMessage({
       type: 'onBreak',
@@ -150,7 +150,7 @@ const Blocked = ({ shouldSync, onCloseTab }) => {
 // });
 
 const App = () => {
-  const { fetch, dispatch, setActive, setBreakAt, darkMode, setDarkMode, active } = useStore();
+  const { fetch, dispatch, setActive, setIsBreak, darkMode, setDarkMode, active } = useStore();
 
   const initRef = useRef(null);
 
@@ -162,14 +162,14 @@ const App = () => {
     browser.runtime.onMessage.addListener(function(request) {
       if (request && request.id === 'fromBackground') {
         setActive(request.active);
-        setBreakAt(request.breakAt);
+        setIsBreak(request.isBreak);
         dispatch({ type: 'INIT', payload: request.list });
       } else if (request && request.id === 'onToggle') {
         setActive(request.active);
       } else if (request && request.id === 'onChangeList') {
         dispatch({ type: 'INIT', payload: request.list });
       } else if (request && request.id === 'onBreak') {
-        setBreakAt(request.breakAt);
+        setIsBreak(request.isBreak);
       } else if (request && request.id === 'onToggleDarkMode') {
         setDarkMode(request.darkMode);
       }

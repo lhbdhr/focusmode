@@ -81,7 +81,7 @@ const TimerText = styled.p`
   margin-left: 4px;
 `;
 
-const Timer = ({ target, resetBreakAt, setTarget }) => {
+const Timer = ({ target, setIsBreak, setTarget }) => {
   const [timeLeft, setTimeLeft] = useState('');
   const [interval, setInterval] = useState(0);
   console.log('timer', { timeLeft, target });
@@ -100,7 +100,7 @@ const Timer = ({ target, resetBreakAt, setTarget }) => {
 
       if (remaining < 0) {
         setInterval(null);
-        resetBreakAt(); // stop the timer
+        setIsBreak(false); // stop the timer
         setTarget(undefined);
       }
     }
@@ -115,15 +115,7 @@ export default ({ shouldSync }) => {
   const { list, dispatch } = useList({ shouldSync });
   const { setActive, active } = useActive({ shouldSync });
   const { setDarkMode, darkMode } = useDarkMode({ shouldSync });
-  const {
-    setBreakAt,
-    isBreak,
-    resetBreakAt,
-    interval,
-    remainingTime,
-    target,
-    setTarget,
-  } = useBreak({
+  const { isBreak, setIsBreak, interval, target, setTarget } = useBreak({
     shouldSync,
   });
 
@@ -157,8 +149,9 @@ export default ({ shouldSync }) => {
     //   }
     // };
 
-    const now = new Date();
-    setBreakAt(now);
+    // const now = new Date();
+    // setBreakAt(now);
+    setIsBreak(true);
 
     const target = await browser.runtime.sendMessage({
       type: 'onBreak',
@@ -171,7 +164,8 @@ export default ({ shouldSync }) => {
   };
 
   const handleResume = () => {
-    resetBreakAt();
+    // resetBreakAt();
+    setIsBreak(false);
     setTarget(undefined);
     browser.runtime.sendMessage({
       type: 'onResume',
@@ -249,7 +243,7 @@ export default ({ shouldSync }) => {
             isBreak ? (
               <Box display="flex" width="100%" alignItems="baseline">
                 <Description>Focus mode will resume in</Description>
-                <Timer target={target} resetBreakAt={resetBreakAt} setTarget={setTarget} />{' '}
+                <Timer target={target} setIsBreak={setIsBreak} setTarget={setTarget} />{' '}
               </Box>
             ) : (
               <Description>Distracting websites are now blocked</Description>

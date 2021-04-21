@@ -7,63 +7,64 @@ dayjs.extend(relativeTime);
 
 export default function useBreak({ shouldSync = false }) {
   const {
-    setBreakAt,
-    breakAt: breakAtJSON,
+    setIsBreak,
+    isBreak,
+    // breakAt: breakAtJSON,
     interval,
-    resetBreakAt,
+    // resetBreakAt,
     currentTabId,
     target,
     setTarget,
   } = useStore();
 
-  const breakAt = dayjs(breakAtJSON).toDate();
+  // const breakAt = dayjs(breakAtJSON).toDate();
 
   // Syncing with storage after data changed
   useEffect(() => {
     if (shouldSync) {
-      browser.storage.local.set({ breakAt: dayjs(breakAt).toJSON() });
+      browser.storage.local.set({ isBreak });
       if (currentTabId) {
         browser.tabs.sendMessage(currentTabId, {
-          breakAt,
+          isBreak,
           id: 'onBreak',
         });
       }
     }
-  }, [shouldSync, breakAt, currentTabId]);
+  }, [shouldSync, isBreak, currentTabId]);
 
-  const now = new Date().getTime();
+  // const now = new Date().getTime();
 
-  const isBreak = useMemo(() => {
-    if (breakAt) {
-      return dayjs().isBefore(dayjs(breakAt).add(interval, 'minute'));
-    }
-    return false;
-  }, [now, breakAt, interval]);
+  // const isBreak = useMemo(() => {
+  //   if (breakAt) {
+  //     return dayjs().isBefore(dayjs(breakAt).add(interval, 'minute'));
+  //   }
+  //   return false;
+  // }, [now, breakAt, interval]);
 
-  const endTime = useMemo(() => {
-    if (breakAt) {
-      return dayjs(breakAt)
-        .add(interval, 'minute')
-        .format('h:mma');
-    }
-  }, [breakAt, interval]);
+  // const endTime = useMemo(() => {
+  //   if (breakAt) {
+  //     return dayjs(breakAt)
+  //       .add(interval, 'minute')
+  //       .format('h:mma');
+  //   }
+  // }, [breakAt, interval]);
 
-  const remainingTime = useMemo(() => {
-    if (breakAt) {
-      return dayjs(breakAt)
-        .add(interval, 'minute')
-        .fromNow();
-    }
-  }, [breakAt, interval]);
+  // const remainingTime = useMemo(() => {
+  //   if (breakAt) {
+  //     return dayjs(breakAt)
+  //       .add(interval, 'minute')
+  //       .fromNow();
+  //   }
+  // }, [breakAt, interval]);
 
   return {
-    setBreakAt,
-    breakAt,
+    setIsBreak,
+    // breakAt,
     isBreak,
-    resetBreakAt,
+    // resetBreakAt,
     interval,
-    endTime,
-    remainingTime,
+    // endTime,
+    // remainingTime,
     target,
     setTarget,
   };
