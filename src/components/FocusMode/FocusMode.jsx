@@ -157,7 +157,7 @@ export default ({ shouldSync }) => {
       type: 'onBreak',
       interval,
     });
-    console.log({ target });
+
     setTarget(target);
 
     // getTime();
@@ -201,7 +201,6 @@ export default ({ shouldSync }) => {
   //     }
   //   }
   // }, []);
-  console.log('FocusMode', { target });
   return (
     <Box display="flex" flexDirection="column" height="520px">
       <Box display="flex" justifyContent="space-between">
