@@ -11,6 +11,8 @@ const useFocusMode = ({ list, isActive, isBreak }) => {
 
     const isPause = pausedURL.includes(baseURL);
 
+    console.log({ isActive, isBreak, isPause });
+
     return isPause && isActive && !isBreak;
   }, [isActive, list, isBreak]);
 

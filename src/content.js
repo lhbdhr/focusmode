@@ -141,13 +141,14 @@ const Blocked = ({ shouldSync, onCloseTab }) => {
   );
 };
 
-// let shouldActive;
+let shouldBreak;
 
-// browser.runtime.onMessage.addListener(function(request) {
-//   if (request && request.command === 'resume-focus-mode') {
-//     shouldActive = request.shouldActive;
-//   }
-// });
+browser.runtime.onMessage.addListener(function(request) {
+  if (request && request.command === 'resume-focus-mode') {
+    console.log('here');
+    shouldBreak = request.shouldBreak;
+  }
+});
 
 const App = () => {
   const { fetch, dispatch, setActive, setIsBreak, darkMode, setDarkMode, active } = useStore();
@@ -173,19 +174,18 @@ const App = () => {
       } else if (request && request.id === 'onToggleDarkMode') {
         setDarkMode(request.darkMode);
       }
-      // else if (request && request.command === 'resume-focus-mode') {
-      //   setActive(false);
-      // }
     });
   }, []);
 
-  // useEffect(() => {
-  //   if (shouldActive && !active) {
-  //     setActive(shouldActive);
-  //   }
-  // });
+  useEffect(() => {
+    console.log('hahahah', shouldBreak);
+    // if (!shouldBreak && active) {
+    //   setIsBreak(shouldBreak);
+    // }
+  });
 
   useEffect(() => {
+    console.log('here');
     fetch();
     initRef.current = true;
   }, []);
