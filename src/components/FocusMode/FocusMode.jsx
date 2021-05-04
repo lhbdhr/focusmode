@@ -84,7 +84,6 @@ const TimerText = styled.p`
 const Timer = ({ target, setIsBreak, setTarget }) => {
   const [timeLeft, setTimeLeft] = useState('');
   const [interval, setInterval] = useState(0);
-  console.log('timer', { timeLeft, target });
 
   useInterval(() => {
     if (target) {

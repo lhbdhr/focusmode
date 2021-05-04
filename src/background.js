@@ -35,26 +35,19 @@ browser.runtime.onMessage.addListener(async (request, sender) => {
 
         const remaining = (new Date(target) - now) / 1000;
 
-        // if (remaining < 0) {
-        //   browser.tabs.sendMessage(tabId, {
-        //     command: 'resume-focus-mode',
-        //     shouldActive: true,
-        //   });
-        //   browser.browserAction.setBadgeText({ text: '' });
-        //   clearInterval(intervalID);
-        // }
-
         const minutes = ~~(remaining / 60);
         const seconds = ~~(remaining % 60);
 
         const timeLeft = `${minutes}:${('00' + seconds).slice(-2)}`;
 
         if (remaining <= 0) {
-          browser.tabs.sendMessage(tabId, {
-            command: 'resume-focus-mode',
-            shouldBreak: false,
-          });
-          console.log('background');
+          browser.storage.local.set({ isBreak: false });
+          if (tabId) {
+            browser.tabs.sendMessage(tabId, {
+              isBreak: false,
+              id: 'onBreak',
+            });
+          }
 
           browser.browserAction.setBadgeText({ text: '' });
           clearInterval(intervalID);
