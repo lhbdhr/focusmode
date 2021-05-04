@@ -27,7 +27,7 @@ export default {
   input: {
     background: '#2D3748',
     placeholder: '#ffffff29',
-    color: '#78909c',
+    color: '#f5f5f5',
   },
 
   icon: {
