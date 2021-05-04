@@ -140,30 +140,16 @@ export default ({ shouldSync }) => {
   };
 
   const handleBreak = async () => {
-    // const getTime = async () => {
-    //   const response = await browser.runtime.sendMessage({ command: 'get-time' });
-    //   console.log('from bg handlebreak', { target: response.target });
-    //   if (response && response.target) {
-    //     setTarget(response.target);
-    //   }
-    // };
-
-    // const now = new Date();
-    // setBreakAt(now);
     setIsBreak(true);
-
     const target = await browser.runtime.sendMessage({
       type: 'onBreak',
       interval,
     });
 
     setTarget(target);
-
-    // getTime();
   };
 
   const handleResume = () => {
-    // resetBreakAt();
     setIsBreak(false);
     setTarget(undefined);
     browser.runtime.sendMessage({

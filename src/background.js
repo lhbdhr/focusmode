@@ -86,28 +86,30 @@ browser.runtime.onInstalled.addListener(async function() {
   }
 
   const tabs = await browser.tabs.query({ currentWindow: true, active: true });
-  const [baseURL] = tabs[0].url.match(baseURLRegex);
 
-  const tabId = tabs[0].id;
+  if (tabs.length > 0) {
+    const [baseURL] = tabs[0].url.match(baseURLRegex) ?? [];
 
-  if (baseURL) {
-    const { list, active, isBreak } = await browser.storage.local.get();
-    try {
-      browser.tabs.sendMessage(tabId, {
-        isBreak,
-        active,
-        list,
-        id: 'fromBackground',
-      });
-    } catch (error) {
-      return false;
+    const tabId = tabs[0].id;
+    if (baseURL) {
+      const { list, active, isBreak } = await browser.storage.local.get();
+      try {
+        browser.tabs.sendMessage(tabId, {
+          isBreak,
+          active,
+          list,
+          id: 'fromBackground',
+        });
+      } catch (error) {
+        return false;
+      }
     }
   }
 });
 
 browser.tabs.onActivated.addListener(async function(activeInfo) {
   const tabs = await browser.tabs.query({ currentWindow: true, active: true });
-  const [baseURL] = tabs[0].url.match(baseURLRegex);
+  const [baseURL] = tabs[0].url.match(baseURLRegex) ?? [];
 
   if (baseURL) {
     const { list, active, isBreak } = await browser.storage.local.get();
@@ -128,7 +130,7 @@ browser.tabs.onActivated.addListener(async function(activeInfo) {
 
 browser.tabs.onUpdated.addListener(async (tabId, change, tab) => {
   if (tab.active && change.url) {
-    const [baseURL] = change.url.match(baseURLRegex);
+    const [baseURL] = change.url.match(baseURLRegex) ?? [];
     if (baseURL) {
       const { list, active, isBreak } = await browser.storage.local.get();
       try {
