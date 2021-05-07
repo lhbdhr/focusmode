@@ -71,8 +71,6 @@ const Description = styled.p`
 `;
 
 const TimerText = styled.p`
-  font-size: 16px;
-  font-weight: 500;
   color: ${props => props.theme.description};
   margin-top: 0;
   margin-bottom: 12px;
