@@ -105,7 +105,7 @@ const Blocked = ({ shouldSync, onCloseTab }) => {
       type: 'onBreak',
       interval,
     });
-
+    console.log('target content onbreak', target);
     setTarget(target);
   };
 
@@ -142,7 +142,16 @@ const Blocked = ({ shouldSync, onCloseTab }) => {
 };
 
 const App = () => {
-  const { fetch, dispatch, setActive, setIsBreak, darkMode, setDarkMode } = useStore();
+  const {
+    fetch,
+    dispatch,
+    setActive,
+    setIsBreak,
+    darkMode,
+    setDarkMode,
+    setTarget,
+    setCurrentTabId,
+  } = useStore();
 
   const initRef = useRef(null);
 
@@ -151,8 +160,10 @@ const App = () => {
   };
 
   useEffect(() => {
+    fetch();
     browser.runtime.onMessage.addListener(function(request) {
       if (request && request.id === 'fromBackground') {
+        setCurrentTabId(request.tabId);
         setActive(request.active);
         setIsBreak(request.isBreak);
         dispatch({ type: 'INIT', payload: request.list });
@@ -166,10 +177,6 @@ const App = () => {
         setDarkMode(request.darkMode);
       }
     });
-  }, []);
-
-  useEffect(() => {
-    fetch();
     initRef.current = true;
   }, []);
 

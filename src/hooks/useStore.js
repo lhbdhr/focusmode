@@ -45,9 +45,6 @@ const useStore = create(set => {
     list: [],
     currentTabId: '',
     isBreak: false,
-    // breakAt: dayjs()
-    //   .subtract(1, 'day')
-    //   .toJSON(),
     interval: 0.1,
     target: undefined,
     darkMode: window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches,
@@ -60,56 +57,48 @@ const useStore = create(set => {
     setIsBreak: isBreak => {
       set(() => ({ isBreak }));
     },
-    // setBreakAt: breakAt => {
-    //   set(() => ({ breakAt }));
-    // },
     setTarget: target => {
       set(() => ({ target }));
     },
-    // resetBreakAt: () => {
-    //   set(() => ({
-    //     breakAt: dayjs()
-    //       .subtract(1, 'day')
-    //       .toJSON(),
-    //   }));
-    // },
     setInterval: interval => {
       set(() => ({ interval: interval * 60000 }));
     },
     fetch: async () => {
-      const {
-        active,
-        list,
-        /*breakAt,*/ isBreak,
-        interval,
-        darkMode,
-      } = await browser.storage.local.get({
-        active: false,
-        list: getStubData(),
-        isBreak: false,
-        // breakAt: dayjs()
-        //   .subtract(1, 'day')
-        //   .toJSON(),
-        interval: 0.1,
-        darkMode: window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches,
-      });
+      try {
+        const {
+          active,
+          list,
+          isBreak,
 
-      set({
-        active,
-        list,
-        interval,
-        //breakAt: dayjs(breakAt).toJSON(),
-        isBreak,
-        darkMode,
-      });
-      return {
-        active,
-        list,
-        interval,
-        // breakAt,
-        isBreak,
-        darkMode,
-      };
+          interval,
+          darkMode,
+        } = await browser?.storage?.local.get({
+          active: false,
+          list: getStubData(),
+          isBreak: false,
+          interval: 0.1,
+          darkMode: window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches,
+        });
+
+        set({
+          active,
+          list,
+          interval,
+
+          isBreak,
+          darkMode,
+        });
+        return {
+          active,
+          list,
+          interval,
+
+          isBreak,
+          darkMode,
+        };
+      } catch (error) {
+        console.log('error fetching from local storage', error);
+      }
     },
     getCurrentTabId: async () => {
       const tabs = await browser.tabs.query({ active: true, currentWindow: true });

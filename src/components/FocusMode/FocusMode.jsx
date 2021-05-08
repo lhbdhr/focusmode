@@ -86,7 +86,9 @@ const Timer = ({ target, setIsBreak, setTarget }) => {
   useInterval(() => {
     if (target) {
       setInterval(100);
-      const remaining = (new Date(target) - new Date()) / 1000;
+      const now = new Date();
+
+      const remaining = (new Date(target) - now) / 1000;
 
       const minutes = ~~(remaining / 60);
       const seconds = ~~(remaining % 60);
@@ -95,7 +97,7 @@ const Timer = ({ target, setIsBreak, setTarget }) => {
 
       setTimeLeft(timeLeft);
 
-      if (remaining < 0) {
+      if (timeLeft === '0:00') {
         setInterval(null);
         setIsBreak(false); // stop the timer
         setTarget(undefined);
@@ -129,11 +131,11 @@ export default ({ shouldSync }) => {
   const updateItem = payload => dispatch({ type: UPDATE_LINK, payload });
 
   const toggle = () => {
-    if (active) {
-      browser.runtime.sendMessage({ type: 'onInactive' });
-    } else {
-      browser.runtime.sendMessage({ type: 'onActive' });
-    }
+    // if (active) {
+    //   browser.runtime.sendMessage({ type: 'onInactive' });
+    // } else {
+    //   browser.runtime.sendMessage({ type: 'onActive' });
+    // }
     setActive(!active);
   };
 
@@ -159,31 +161,32 @@ export default ({ shouldSync }) => {
     setDarkMode(!darkMode);
   };
 
-  // useEffect(() => {
-  //   const isDarkMode =
-  //     window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+  useEffect(() => {
+    const isDarkMode =
+      window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
 
-  //   if (isBreak) {
-  //     if (isDarkMode) {
-  //       browser.browserAction.setIcon({ path: './assets/img/coffee-dark-mode.png' });
-  //     } else {
-  //       browser.browserAction.setIcon({ path: './assets/img/coffee.png' });
-  //     }
-  //   }
-  //   if (active) {
-  //     if (isDarkMode) {
-  //       browser.browserAction.setIcon({ path: './assets/img/circle-dark-mode.png' });
-  //     } else {
-  //       browser.browserAction.setIcon({ path: './assets/img/circle.png' });
-  //     }
-  //   } else {
-  //     if (isDarkMode) {
-  //       browser.browserAction.setIcon({ path: './assets/img/hexagon-dark-mode.png' });
-  //     } else {
-  //       browser.browserAction.setIcon({ path: './assets/img/hexagon.png' });
-  //     }
-  //   }
-  // }, []);
+    if (isBreak) {
+      if (isDarkMode) {
+        browser.browserAction.setIcon({ path: './assets/img/coffee-dark-mode.png' });
+      } else {
+        browser.browserAction.setIcon({ path: './assets/img/coffee.png' });
+      }
+    }
+    if (active) {
+      if (isDarkMode) {
+        browser.browserAction.setIcon({ path: './assets/img/circle-dark-mode.png' });
+      } else {
+        browser.browserAction.setIcon({ path: './assets/img/circle.png' });
+      }
+    } else {
+      if (isDarkMode) {
+        browser.browserAction.setIcon({ path: './assets/img/hexagon-dark-mode.png' });
+      } else {
+        browser.browserAction.setIcon({ path: './assets/img/hexagon.png' });
+      }
+    }
+  }, []);
+
   return (
     <Box display="flex" flexDirection="column" height="520px">
       <Box display="flex" justifyContent="space-between">

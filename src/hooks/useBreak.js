@@ -1,23 +1,12 @@
 import useStore from './useStore';
-import { useEffect, useMemo } from 'react';
+import { useEffect } from 'react';
 import browser from 'webextension-polyfill';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 dayjs.extend(relativeTime);
 
 export default function useBreak({ shouldSync = false }) {
-  const {
-    setIsBreak,
-    isBreak,
-    // breakAt: breakAtJSON,
-    interval,
-    // resetBreakAt,
-    currentTabId,
-    target,
-    setTarget,
-  } = useStore();
-
-  // const breakAt = dayjs(breakAtJSON).toDate();
+  const { setIsBreak, isBreak, interval, currentTabId, target, setTarget } = useStore();
 
   // Syncing with storage after data changed
   useEffect(() => {
@@ -30,41 +19,12 @@ export default function useBreak({ shouldSync = false }) {
         });
       }
     }
-  }, [shouldSync, isBreak, currentTabId]);
-
-  // const now = new Date().getTime();
-
-  // const isBreak = useMemo(() => {
-  //   if (breakAt) {
-  //     return dayjs().isBefore(dayjs(breakAt).add(interval, 'minute'));
-  //   }
-  //   return false;
-  // }, [now, breakAt, interval]);
-
-  // const endTime = useMemo(() => {
-  //   if (breakAt) {
-  //     return dayjs(breakAt)
-  //       .add(interval, 'minute')
-  //       .format('h:mma');
-  //   }
-  // }, [breakAt, interval]);
-
-  // const remainingTime = useMemo(() => {
-  //   if (breakAt) {
-  //     return dayjs(breakAt)
-  //       .add(interval, 'minute')
-  //       .fromNow();
-  //   }
-  // }, [breakAt, interval]);
+  }, [isBreak, shouldSync, currentTabId]);
 
   return {
     setIsBreak,
-    // breakAt,
     isBreak,
-    // resetBreakAt,
     interval,
-    // endTime,
-    // remainingTime,
     target,
     setTarget,
   };

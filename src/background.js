@@ -28,38 +28,44 @@ browser.runtime.onMessage.addListener(async (request, sender) => {
     const target = new Date(now.getTime() + request.interval * 1000 * 60 + 500).toISOString();
     targetEnd = target;
     const countdown = () => {
-      intervalID = setInterval(function() {
-        const now = new Date();
+      try {
+        intervalID = setInterval(function() {
+          const now = new Date();
 
-        const remaining = (new Date(target) - now) / 1000;
+          const remaining = (new Date(target) - now) / 1000;
 
-        const minutes = ~~(remaining / 60);
-        const seconds = ~~(remaining % 60);
+          const minutes = ~~(remaining / 60);
+          const seconds = ~~(remaining % 60);
 
-        const timeLeft = `${minutes}:${('00' + seconds).slice(-2)}`;
+          const timeLeft = `${minutes}:${('00' + seconds).slice(-2)}`;
 
-        if (remaining <= 0) {
-          browser.storage.local.set({ isBreak: false });
+          if (timeLeft === '0:00') {
+            clearInterval(intervalID);
+            // browser.storage.local.set({ isBreak: false });
 
-          if (tabs.length > 0) {
-            const tabId = tabs[0].id;
-            if (tabId) {
-              browser.tabs.sendMessage(tabId, {
-                isBreak: false,
-                id: 'onBreak',
-              });
+            if (tabs.length > 0) {
+              const tabId = tabs[0].id;
+              if (tabId) {
+                browser.tabs.sendMessage(tabId, {
+                  isBreak: false,
+                  id: 'onBreak',
+                });
+              }
             }
-          }
 
-          browser.browserAction.setBadgeText({ text: '' });
-          clearInterval(intervalID);
-        } else {
-          browser.browserAction.setBadgeText({ text: timeLeft });
-          browser.browserAction.setBadgeBackgroundColor({ color: '#374862' });
-        }
-      }, 100);
+            browser.browserAction.setBadgeText({ text: '' });
+          } else {
+            browser.browserAction.setBadgeText({ text: timeLeft });
+            browser.browserAction.setBadgeBackgroundColor({ color: '#374862' });
+          }
+        }, 100);
+      } catch (e) {
+        clearInterval(intervalID);
+      }
     };
-    countdown();
+    if (target) {
+      countdown();
+    }
 
     return Promise.resolve(target);
   }
@@ -102,7 +108,7 @@ browser.runtime.onInstalled.addListener(async function() {
           list,
           id: 'fromBackground',
         });
-      } catch (error) {
+      } catch {
         return false;
       }
     }
@@ -122,9 +128,10 @@ browser.tabs.onActivated.addListener(async function(activeInfo) {
         active,
         list,
         id: 'fromBackground',
+        tabId: activeInfo.tabId,
       });
       return true;
-    } catch (error) {
+    } catch {
       return false;
     }
   }
@@ -142,7 +149,7 @@ browser.tabs.onUpdated.addListener(async (tabId, change, tab) => {
           list,
           id: 'fromBackground',
         });
-      } catch (error) {
+      } catch {
         return false;
       }
     }

@@ -25,7 +25,6 @@ const Popup = () => {
   useEffect(() => {
     fetch();
     getCurrentTabId();
-    initRef.current = true;
 
     const getTime = async () => {
       const response = await browser.runtime.sendMessage({ command: 'get-time', interval });
@@ -36,6 +35,7 @@ const Popup = () => {
     };
 
     getTime();
+    initRef.current = true;
   }, []);
 
   return (
