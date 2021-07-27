@@ -27,9 +27,11 @@ browser.runtime.onMessage.addListener(async (request, sender) => {
 
     const target = new Date(now.getTime() + request.interval * 1000 * 60 + 500).toISOString();
     targetEnd = target;
+
     const countdown = () => {
       try {
         intervalID = setInterval(function() {
+          const isAfterNow = dayjs(target).isAfter(dayjs(now));
           const now = new Date();
 
           const remaining = (new Date(target) - now) / 1000;
@@ -39,7 +41,7 @@ browser.runtime.onMessage.addListener(async (request, sender) => {
 
           const timeLeft = `${minutes}:${('00' + seconds).slice(-2)}`;
 
-          if (remaining < 0.0) {
+          if (remaining < (0.0).toPrecision(6) && !isAfterNow) {
             clearInterval(intervalID);
             // browser.storage.local.set({ isBreak: false });
 
@@ -75,8 +77,10 @@ browser.runtime.onMessage.addListener(async (request, sender) => {
   }
 
   if (request.type == 'onResume') {
+    targetEnd = undefined;
     clearInterval(intervalID);
     browser.browserAction.setBadgeText({ text: '' });
+
     if (isDarkMode) {
       return browser.browserAction.setIcon({ path: './assets/img/circle-dark-mode.png' });
     }

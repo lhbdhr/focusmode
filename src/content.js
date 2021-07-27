@@ -105,7 +105,6 @@ const Blocked = ({ shouldSync, onCloseTab }) => {
       type: 'onBreak',
       interval,
     });
-    console.log('target content onbreak', target);
     setTarget(target);
   };
 

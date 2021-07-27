@@ -25,6 +25,7 @@ import BreakButton from 'components/BreakButton';
 import IconWrapper from 'components/IconWrapper';
 import browser from 'webextension-polyfill';
 import useInterval from '@use-it/interval';
+import dayjs from 'dayjs';
 
 const Text = styled.span`
   flex-grow: 1;
@@ -84,11 +85,12 @@ const Timer = ({ target, setIsBreak, setTarget }) => {
   const [interval, setInterval] = useState(0);
 
   useInterval(() => {
-    if (target) {
-      setInterval(100);
-      const now = new Date();
+    const now = new Date();
+    const isAfterNow = dayjs(target).isAfter(dayjs());
+    const remaining = (new Date(target) - now) / 1000;
 
-      const remaining = (new Date(target) - now) / 1000;
+    if (!!target) {
+      setInterval(100);
 
       const minutes = ~~(remaining / 60);
       const seconds = ~~(remaining % 60);
@@ -97,7 +99,7 @@ const Timer = ({ target, setIsBreak, setTarget }) => {
 
       setTimeLeft(timeLeft);
 
-      if (remaining < 0.0) {
+      if (remaining < (0.0).toPrecision(6) && !isAfterNow) {
         setInterval(null);
         setIsBreak(false); // stop the timer
         setTarget(undefined);
