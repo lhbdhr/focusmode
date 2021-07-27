@@ -97,7 +97,7 @@ const Timer = ({ target, setIsBreak, setTarget }) => {
 
       setTimeLeft(timeLeft);
 
-      if (timeLeft === '0:00') {
+      if (remaining < 0.0) {
         setInterval(null);
         setIsBreak(false); // stop the timer
         setTarget(undefined);

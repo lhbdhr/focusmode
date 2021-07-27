@@ -39,7 +39,7 @@ browser.runtime.onMessage.addListener(async (request, sender) => {
 
           const timeLeft = `${minutes}:${('00' + seconds).slice(-2)}`;
 
-          if (timeLeft === '0:00') {
+          if (remaining < 0.0) {
             clearInterval(intervalID);
             // browser.storage.local.set({ isBreak: false });
 
