@@ -164,25 +164,11 @@ export default ({ shouldSync }) => {
   useEffect(() => {
     const isDarkMode =
       window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-
-    if (isBreak) {
-      if (isDarkMode) {
-        browser.browserAction.setIcon({ path: './assets/img/coffee-dark-mode.png' });
-      } else {
-        browser.browserAction.setIcon({ path: './assets/img/coffee.png' });
-      }
-    }
     if (active) {
       if (isDarkMode) {
         browser.browserAction.setIcon({ path: './assets/img/circle-dark-mode.png' });
       } else {
         browser.browserAction.setIcon({ path: './assets/img/circle.png' });
-      }
-    } else {
-      if (isDarkMode) {
-        browser.browserAction.setIcon({ path: './assets/img/hexagon-dark-mode.png' });
-      } else {
-        browser.browserAction.setIcon({ path: './assets/img/hexagon.png' });
       }
     }
   }, []);
