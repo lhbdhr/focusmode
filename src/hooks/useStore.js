@@ -45,7 +45,7 @@ const useStore = create(set => {
     list: [],
     currentTabId: '',
     isBreak: false,
-    interval: 0.1,
+    interval: 5,
     target: undefined,
     darkMode: window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches,
     setDarkMode: darkMode => {
