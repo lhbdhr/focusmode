@@ -45,7 +45,7 @@ const useStore = create(set => {
     list: [],
     currentTabId: '',
     isBreak: false,
-    interval: 5,
+    interval: 0.5,
     target: undefined,
     darkMode: window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches,
     setDarkMode: darkMode => {
@@ -76,9 +76,15 @@ const useStore = create(set => {
           active: false,
           list: getStubData(),
           isBreak: false,
-          interval: 5,
+          interval: 0.5,
           darkMode: window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches,
         });
+        console.log({active,
+          list,
+          isBreak,
+
+          interval,
+          darkMode,})
 
         set({
           active,
@@ -104,6 +110,9 @@ const useStore = create(set => {
       const tabs = await browser.tabs.query({ active: true, currentWindow: true });
 
       set({ currentTabId: tabs[0].id });
+    },
+    setCurrentTabId: (tabId) => {
+      set({ currentTabId: tabId });
     },
     dispatch: ({ type, payload }) => {
       set(state => ({ list: reducer(state.list, { type, payload }) }));

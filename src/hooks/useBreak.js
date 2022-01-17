@@ -10,16 +10,22 @@ export default function useBreak({ shouldSync = false }) {
 
   // Syncing with storage after data changed
   useEffect(() => {
+    console.log({shouldSync})
     if (shouldSync) {
       browser.storage.local.set({ isBreak });
-      if (currentTabId) {
-        browser.tabs.sendMessage(currentTabId, {
-          isBreak,
-          id: 'onBreak',
-        });
+      try {
+        if (currentTabId && browser && browser.tabs && browser.runtime?.id) {
+          browser.tabs.sendMessage(currentTabId,{
+            isBreak,
+            id: 'onBreak',
+          });
+          console.log("send from onBreak")
+        }
+      } catch (err) {
+        console.log("onBreak", err)
       }
     }
-  }, [isBreak, shouldSync, currentTabId]);
+  }, [isBreak, shouldSync, currentTabId, browser]);
 
   return {
     setIsBreak,

@@ -1,7 +1,7 @@
 import globalStyle from 'assets/styles/global';
 import { ThemeProvider } from 'context/Theme';
 import 'libs/polyfills';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, } from 'react';
 import ReactDOM from 'react-dom';
 import styled, { createGlobalStyle, StyleSheetManager } from 'styled-components';
 import browser from 'webextension-polyfill';
@@ -161,6 +161,7 @@ const App = () => {
   useEffect(() => {
     fetch();
     browser.runtime.onMessage.addListener(function(request) {
+      console.log("request id", request.id)
       if (request && request.id === 'fromBackground') {
         setCurrentTabId(request.tabId);
         setActive(request.active);
@@ -173,6 +174,7 @@ const App = () => {
       } else if (request && request.id === 'onBreak') {
         setIsBreak(request.isBreak);
       } else if (request && request.id === 'onToggleDarkMode') {
+        console.log("hehe")
         setDarkMode(request.darkMode);
       }
     });

@@ -10,14 +10,14 @@ export default function useDarkMode({ shouldSync = false }) {
     if (shouldSync) {
       browser.storage.local.set({ darkMode });
 
-      if (currentTabId) {
+      if (currentTabId && browser && browser.tabs && browser.runtime?.id) {
         browser.tabs.sendMessage(currentTabId, {
           darkMode,
           id: 'onToggleDarkMode',
         });
       }
     }
-  }, [darkMode, shouldSync, currentTabId]);
+  }, [darkMode, shouldSync, currentTabId, browser]);
 
   return {
     darkMode,

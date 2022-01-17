@@ -10,14 +10,14 @@ export default function useList({ shouldSync }) {
   useEffect(() => {
     if (shouldSync) {
       browser.storage.local.set({ list });
-      if (currentTabId) {
+      if (currentTabId && browser && browser.tabs && browser.runtime?.id) {
         browser.tabs.sendMessage(currentTabId, {
           list,
           id: 'onChangeList',
         });
       }
     }
-  }, [list, shouldSync, currentTabId]);
+  }, [list, shouldSync, currentTabId, browser]);
 
   return {
     list,

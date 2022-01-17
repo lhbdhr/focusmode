@@ -106,6 +106,8 @@ const Timer = ({ target, setIsBreak, setTarget }) => {
       }
     }
   }, interval);
+  console.log("timeLeft", timeLeft)
+  console.log("target", target)
 
   return <TimerText>{timeLeft}</TimerText>;
 };
@@ -142,13 +144,17 @@ export default ({ shouldSync }) => {
   };
 
   const handleBreak = async () => {
-    setIsBreak(true);
+  
     const target = await browser.runtime.sendMessage({
       type: 'onBreak',
       interval,
     });
+    if (target) {
+      setIsBreak(true);
+      setTarget(target);
+    }
 
-    setTarget(target);
+  
   };
 
   const handleResume = () => {
