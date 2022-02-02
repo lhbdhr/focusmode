@@ -39,13 +39,15 @@ const reducer = (state, { payload, type }) => {
   }
 };
 
+const intervalDuration = 1;
+
 const useStore = create(set => {
   return {
     active: false,
     list: [],
     currentTabId: '',
     isBreak: false,
-    interval: 0.5,
+    interval: intervalDuration,
     target: undefined,
     darkMode: window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches,
     setDarkMode: darkMode => {
@@ -76,7 +78,7 @@ const useStore = create(set => {
           active: false,
           list: getStubData(),
           isBreak: false,
-          interval: 0.5,
+          interval: intervalDuration,
           darkMode: window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches,
         });
         console.log({active,
