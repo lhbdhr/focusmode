@@ -13,13 +13,13 @@ export default function useActive({ shouldSync = false }) {
         setIsBreak(false);
       }
       if (currentTabId && browser && browser.tabs && browser.runtime?.id) {
-        browser.tabs.sendMessage(currentTabId,{
+        browser.tabs.sendMessage(currentTabId, {
           active,
           id: 'onToggle',
         });
       }
     }
-  }, [active, shouldSync, currentTabId, browser]);
+  }, [active, shouldSync, currentTabId]);
 
   return {
     active,

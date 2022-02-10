@@ -6,32 +6,25 @@ import relativeTime from 'dayjs/plugin/relativeTime';
 dayjs.extend(relativeTime);
 
 export default function useBreak({ shouldSync = false }) {
-  const { setIsBreak, isBreak, interval, currentTabId, target, setTarget } = useStore();
+  const { setIsBreak, isBreak, interval, currentTabId } = useStore();
 
   // Syncing with storage after data changed
   useEffect(() => {
-    console.log({shouldSync})
     if (shouldSync) {
       browser.storage.local.set({ isBreak });
-      try {
-        if (currentTabId && browser && browser.tabs && browser.runtime?.id) {
-          browser.tabs.sendMessage(currentTabId,{
-            isBreak,
-            id: 'onBreak',
-          });
-          console.log("send from onBreak")
-        }
-      } catch (err) {
-        console.log("onBreak", err)
+
+      if (currentTabId && browser && browser.tabs && browser.runtime?.id) {
+        browser.tabs.sendMessage(currentTabId, {
+          isBreak: isBreak,
+          id: 'onBreak',
+        });
       }
     }
-  }, [isBreak, shouldSync, currentTabId, browser]);
+  }, [isBreak, shouldSync, currentTabId]);
 
   return {
     setIsBreak,
     isBreak,
     interval,
-    target,
-    setTarget,
   };
 }

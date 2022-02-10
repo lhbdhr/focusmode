@@ -17,7 +17,7 @@ export default function useDarkMode({ shouldSync = false }) {
         });
       }
     }
-  }, [darkMode, shouldSync, currentTabId, browser]);
+  }, [darkMode, shouldSync, currentTabId]);
 
   return {
     darkMode,

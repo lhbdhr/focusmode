@@ -1,7 +1,7 @@
 import globalStyle from 'assets/styles/global';
 import { ThemeProvider } from 'context/Theme';
 import 'libs/polyfills';
-import React, { useEffect, useRef, } from 'react';
+import React, { useEffect, useRef } from 'react';
 import ReactDOM from 'react-dom';
 import styled, { createGlobalStyle, StyleSheetManager } from 'styled-components';
 import browser from 'webextension-polyfill';
@@ -9,6 +9,7 @@ import useStore from 'hooks/useStore';
 import useList from 'hooks/useList';
 import useActive from 'hooks/useActive';
 import useBreak from 'hooks/useBreak';
+import useTarget from 'hooks/useTarget';
 import useFocusMode from 'hooks/useFocusMode';
 import useDarkMode from 'hooks/useDarkMode';
 import BreakButton from 'components/BreakButton';
@@ -91,10 +92,11 @@ const Flex = styled.div`
 const Blocked = ({ shouldSync, onCloseTab }) => {
   const { list } = useList({ shouldSync });
   const { active } = useActive({ shouldSync });
-  const { setIsBreak, isBreak, interval, setTarget } = useBreak({ shouldSync });
+  const { setIsBreak, isBreak, interval } = useBreak({ shouldSync });
+  const { setTarget, target } = useTarget({ shouldSync });
   const { darkMode } = useDarkMode({ shouldSync });
 
-  const { isFocusModeOn } = useFocusMode({ isActive: active, list, isBreak });
+  const { isFocusModeOn } = useFocusMode({ isActive: active, list, isBreak, target });
 
   const handleBreak = async () => {
     // const now = new Date();
@@ -161,11 +163,11 @@ const App = () => {
   useEffect(() => {
     fetch();
     browser.runtime.onMessage.addListener(function(request) {
-      console.log("request id", request.id)
       if (request && request.id === 'fromBackground') {
         setCurrentTabId(request.tabId);
         setActive(request.active);
         setIsBreak(request.isBreak);
+        setTarget(request.target);
         dispatch({ type: 'INIT', payload: request.list });
       } else if (request && request.id === 'onToggle') {
         setActive(request.active);
@@ -174,8 +176,9 @@ const App = () => {
       } else if (request && request.id === 'onBreak') {
         setIsBreak(request.isBreak);
       } else if (request && request.id === 'onToggleDarkMode') {
-        console.log("hehe")
         setDarkMode(request.darkMode);
+      } else if (request && request.id === 'onTarget') {
+        setTarget(request.target);
       }
     });
     initRef.current = true;

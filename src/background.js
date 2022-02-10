@@ -9,15 +9,17 @@ dayjs.extend(duration);
 let intervalID;
 let targetEnd;
 
-const isValidURL = (url) => {
+const isValidURL = url => {
   if (url) {
-    return url.indexOf("http://") == 0 || url.indexOf("https://") == 0;
+    return url.indexOf('http://') == 0 || url.indexOf('https://') == 0;
   }
-}
+};
 
 browser.runtime.onMessage.addListener(async (request, sender) => {
   try {
-    const tabs = await browser.tabs.query({ currentWindow: true, active: true });
+    const tabs = await browser.tabs.query({ currentWindow: true });
+    const { list } = await browser.storage.local.get();
+
     const media = window.matchMedia('(prefers-color-scheme: dark)');
 
     const isDarkMode = window.matchMedia && media.matches;
@@ -32,10 +34,10 @@ browser.runtime.onMessage.addListener(async (request, sender) => {
     if (request.type == 'onBreak') {
       const now = new Date();
 
-      const target = new Date(now.getTime() + request.interval * 1000 * 60 + 500).toISOString();
+      const target = new Date(now.getTime() + request.interval * 1000 * 60 + 1000).toISOString();
       targetEnd = target;
 
-      const countdown = () => {
+      const countdown = async () => {
         try {
           intervalID = setInterval(function() {
             const isAfterNow = dayjs(target).isAfter(dayjs(now));
@@ -50,17 +52,26 @@ browser.runtime.onMessage.addListener(async (request, sender) => {
 
             if (remaining < (0.0).toPrecision(6) && !isAfterNow) {
               clearInterval(intervalID);
-              // browser.storage.local.set({ isBreak: false });
 
               if (tabs.length > 0) {
-                const tabId = tabs[0].id;
-                if (tabId) {
-                  browser.tabs.sendMessage(tabId, {
-                    isBreak: false,
-                    id: 'onBreak',
+                tabs.forEach(({ url, id }) => {
+                  const [baseURL] = url.match(baseURLRegex) ?? [];
+
+                  const pausedURL = list.map(({ url }) => {
+                    const [baseURL] = url.match(baseURLRegex);
+                    return baseURL;
                   });
-                }
+
+                  if (pausedURL.includes(baseURL)) {
+                    browser.tabs.sendMessage(id, {
+                      isBreak: false,
+                      id: 'onBreak',
+                    });
+                  }
+                });
               }
+
+              console.log({ tabs });
 
               browser.browserAction.setBadgeText({ text: '' });
             } else {
@@ -73,6 +84,7 @@ browser.runtime.onMessage.addListener(async (request, sender) => {
         }
       };
       if (target) {
+        // browser.storage.local.set({ targetEnd });
         countdown();
       }
 
@@ -84,7 +96,9 @@ browser.runtime.onMessage.addListener(async (request, sender) => {
     }
 
     if (request.type == 'onResume') {
-      targetEnd = undefined;
+      targetEnd = null;
+      // const { target } = await browser.storage.local.get();
+
       clearInterval(intervalID);
       browser.browserAction.setBadgeText({ text: '' });
 
@@ -93,9 +107,8 @@ browser.runtime.onMessage.addListener(async (request, sender) => {
       }
       return browser.browserAction.setIcon({ path: './assets/img/circle.png' });
     }
-  } catch(error) {
-    console.log("runtime.onMessage error", error)
-    return Promise.resolve("");
+  } catch (error) {
+    return Promise.resolve('');
   }
 });
 
@@ -115,12 +128,13 @@ browser.runtime.onInstalled.addListener(async function() {
 
     const tabId = tabs[0].id;
     if (baseURL) {
-      const { list, active, isBreak } = await browser.storage.local.get();
+      const { list, active, isBreak, target } = await browser.storage.local.get();
       try {
         browser.tabs.sendMessage(tabId, {
           isBreak,
           active,
           list,
+          target,
           id: 'fromBackground',
         });
       } catch {
@@ -135,34 +149,35 @@ browser.tabs.onActivated.addListener(async function(activeInfo) {
   const [baseURL] = tabs[0].url.match(baseURLRegex) ?? [];
 
   if (baseURL && tabs.length > 0 && !!tabs[0].url && isValidURL(tabs[0].url)) {
-    const { list, active, isBreak } = await browser.storage.local.get();
+    const { list, active, isBreak, target } = await browser.storage.local.get();
 
     try {
       browser.tabs.sendMessage(activeInfo.tabId, {
         isBreak,
         active,
         list,
+        target,
         id: 'fromBackground',
         tabId: activeInfo.tabId,
       });
       return true;
     } catch (err) {
-      console.log("onActivated error", error)
       return false;
     }
   }
 });
 
 browser.tabs.onUpdated.addListener(async (tabId, change, tab) => {
-    if (tab.active && change.url && isValidURL(change.url)) {
+  if (tab.active && change.url && isValidURL(change.url)) {
     const [baseURL] = change.url.match(baseURLRegex) ?? [];
     if (baseURL) {
-      const { list, active, isBreak } = await browser.storage.local.get();
+      const { list, active, isBreak, target } = await browser.storage.local.get();
       try {
         browser.tabs.sendMessage(tabId, {
           isBreak,
           active,
           list,
+          target,
           id: 'fromBackground',
         });
       } catch {

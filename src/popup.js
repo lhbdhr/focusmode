@@ -20,7 +20,7 @@ const GlobalStyle = createGlobalStyle`
 
 const Popup = () => {
   const initRef = useRef(null);
-  const { fetch, getCurrentTabId, darkMode, interval, target, setTarget } = useStore();
+  const { fetch, getCurrentTabId, darkMode, interval, setTarget } = useStore();
 
   useEffect(() => {
     fetch();
@@ -43,7 +43,7 @@ const Popup = () => {
       <GlobalStyle />
       <Container>
         <Suspense fallback={<div>Loading...</div>}>
-          <FocusMode shouldSync={initRef.current} target={target} setTarget={setTarget} />
+          <FocusMode shouldSync={initRef.current} />
         </Suspense>
       </Container>
     </ThemeProvider>

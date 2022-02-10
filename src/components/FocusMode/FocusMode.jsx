@@ -16,6 +16,7 @@ import { ADD_LINK, REMOVE_LINK, UPDATE_LINK } from 'hooks/useStore';
 import useActive from 'hooks/useActive';
 import useList from 'hooks/useList';
 import useBreak from 'hooks/useBreak';
+import useTarget from 'hooks/useTarget';
 import useDarkMode from 'hooks/useDarkMode';
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
@@ -102,12 +103,10 @@ const Timer = ({ target, setIsBreak, setTarget }) => {
       if (remaining < (0.0).toPrecision(6) && !isAfterNow) {
         setInterval(null);
         setIsBreak(false); // stop the timer
-        setTarget(undefined);
+        setTarget(null);
       }
     }
   }, interval);
-  console.log("timeLeft", timeLeft)
-  console.log("target", target)
 
   return <TimerText>{timeLeft}</TimerText>;
 };
@@ -118,7 +117,10 @@ export default ({ shouldSync }) => {
   const { list, dispatch } = useList({ shouldSync });
   const { setActive, active } = useActive({ shouldSync });
   const { setDarkMode, darkMode } = useDarkMode({ shouldSync });
-  const { isBreak, setIsBreak, interval, target, setTarget } = useBreak({
+  const { isBreak, setIsBreak, interval } = useBreak({
+    shouldSync,
+  });
+  const { target, setTarget } = useTarget({
     shouldSync,
   });
 
@@ -144,7 +146,6 @@ export default ({ shouldSync }) => {
   };
 
   const handleBreak = async () => {
-  
     const target = await browser.runtime.sendMessage({
       type: 'onBreak',
       interval,
@@ -153,8 +154,6 @@ export default ({ shouldSync }) => {
       setIsBreak(true);
       setTarget(target);
     }
-
-  
   };
 
   const handleResume = () => {
