@@ -39,7 +39,7 @@ const reducer = (state, { payload, type }) => {
   }
 };
 
-const intervalDuration = 0.2;
+const intervalDuration = 5;
 
 const useStore = create(set => {
   return {
