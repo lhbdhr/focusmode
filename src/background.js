@@ -4,6 +4,8 @@ import { baseURLRegex } from 'constants/regex';
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
 
+// TODO: fix issue when close laptop when timer is ticking
+
 dayjs.extend(duration);
 
 let intervalID;
@@ -15,9 +17,43 @@ const isValidURL = url => {
   }
 };
 
+const init = async () => {
+  if (intervalID) {
+    try {
+      clearInterval(intervalID);
+
+      const { list, active, isBreak, target } = await browser.storage.local.get();
+
+      const isAfterNow = dayjs(target).isAfter(dayjs(now));
+
+      if (isBreak && isAfterNow) {
+        browser.browserAction.setBadgeText({ text: timeLeft });
+        browser.browserAction.setBadgeBackgroundColor({ color: '#374862' });
+      } else {
+        browser.browserAction.setBadgeText({ text: '' });
+      }
+
+      // browser.storage.local.set({ isBreak: false });
+
+      // browser.tabs.sendMessage(tabId, {
+      //   isBreak: false,
+      //   active,
+      //   list,
+      //   target,
+      //   id: 'fromBackground',
+      // });
+    } catch (e) {
+      console.log({ e });
+    }
+  }
+};
+
+// init();
+
+browser.runtime.onStartup;
+
 browser.runtime.onMessage.addListener(async (request, sender) => {
   try {
-    const tabs = await browser.tabs.query({ currentWindow: true });
     const { list } = await browser.storage.local.get();
 
     const media = window.matchMedia('(prefers-color-scheme: dark)');
@@ -39,7 +75,7 @@ browser.runtime.onMessage.addListener(async (request, sender) => {
 
       const countdown = async () => {
         try {
-          intervalID = setInterval(function() {
+          intervalID = setInterval(async function() {
             const isAfterNow = dayjs(target).isAfter(dayjs(now));
             const now = new Date();
 
@@ -52,6 +88,8 @@ browser.runtime.onMessage.addListener(async (request, sender) => {
 
             if (remaining < (0.0).toPrecision(6) && !isAfterNow) {
               clearInterval(intervalID);
+
+              const tabs = await browser.tabs.query({ currentWindow: true });
 
               if (tabs.length > 0) {
                 tabs.forEach(({ url, id }) => {
@@ -71,7 +109,7 @@ browser.runtime.onMessage.addListener(async (request, sender) => {
                 });
               }
 
-              console.log({ tabs });
+              browser.storage.local.set({ isBreak: false });
 
               browser.browserAction.setBadgeText({ text: '' });
             } else {
@@ -180,7 +218,7 @@ browser.tabs.onUpdated.addListener(async (tabId, change, tab) => {
           target,
           id: 'fromBackground',
         });
-      } catch {
+      } catch (error) {
         return false;
       }
     }
