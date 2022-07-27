@@ -18,39 +18,202 @@ const isValidURL = url => {
 };
 
 const init = async () => {
-  if (intervalID) {
-    try {
-      clearInterval(intervalID);
+  const { list, active, isBreak, target } = await browser.storage.local.get();
+  const now = new Date();
+  const isAfterNow = dayjs(target).isAfter(dayjs(now));
 
-      const { list, active, isBreak, target } = await browser.storage.local.get();
+  if (intervalID && isAfterNow && isBreak && active) {
+    clearInterval(intervalID);
 
+    intervalID = setInterval(async function() {
       const isAfterNow = dayjs(target).isAfter(dayjs(now));
+      const now = new Date();
 
-      if (isBreak && isAfterNow) {
+      const remaining = (new Date(target) - now) / 1000;
+
+      const minutes = ~~(remaining / 60);
+      const seconds = ~~(remaining % 60);
+
+      const timeLeft = `${minutes}:${('00' + seconds).slice(-2)}`;
+
+      if (remaining < (0.0).toPrecision(6) && !isAfterNow) {
+        clearInterval(intervalID);
+
+        const tabs = await browser.tabs.query({ currentWindow: true });
+
+        if (tabs.length > 0) {
+          tabs.forEach(({ url, id }) => {
+            const [baseURL] = url.match(baseURLRegex) ?? [];
+
+            const pausedURL = list.map(({ url }) => {
+              const [baseURL] = url.match(baseURLRegex);
+              return baseURL;
+            });
+
+            if (pausedURL.includes(baseURL)) {
+              browser.tabs.sendMessage(id, {
+                isBreak: false,
+                id: 'onBreak',
+              });
+            }
+          });
+        }
+
+        browser.storage.local.set({ isBreak: false });
+        browser.browserAction.setBadgeText({ text: '' });
+      } else {
         browser.browserAction.setBadgeText({ text: timeLeft });
         browser.browserAction.setBadgeBackgroundColor({ color: '#374862' });
-      } else {
-        browser.browserAction.setBadgeText({ text: '' });
       }
+    }, 100);
 
-      // browser.storage.local.set({ isBreak: false });
+    // browser.storage.local.set({ isBreak: false });
 
-      // browser.tabs.sendMessage(tabId, {
-      //   isBreak: false,
-      //   active,
-      //   list,
-      //   target,
-      //   id: 'fromBackground',
-      // });
-    } catch (e) {
-      console.log({ e });
-    }
+    // browser.tabs.sendMessage(tabId, {
+    //   isBreak: false,
+    //   active,
+    //   list,
+    //   target,
+    //   id: 'fromBackground',
+    // });
+  } else {
+    browser.browserAction.setBadgeText({ text: '' });
   }
 };
 
 // init();
 
-browser.runtime.onStartup;
+// browser.runtime.onStartup;
+
+// browser.windows.onFocusChanged.addListener(async () => {
+//   const { list, active, isBreak, target } = await browser.storage.local.get();
+
+//   const isAfterNow = dayjs(target).isAfter(dayjs());
+
+//   console.log('isAfterNow->', isAfterNow);
+//   console.log('intervalID->', intervalID);
+//   console.log('targetEnd->', targetEnd);
+//   console.log('target->', target);
+//   if (!!target && isAfterNow && !intervalID && isBreak && active) {
+//     console.log('heehehehe');
+
+//     // clearInterval(intervalID);
+
+//     intervalID = setInterval(async function() {
+//       const now = new Date();
+
+//       const remaining = (new Date(target) - now) / 1000;
+
+//       const minutes = ~~(remaining / 60);
+//       const seconds = ~~(remaining % 60);
+
+//       const timeLeft = `${minutes}:${('00' + seconds).slice(-2)}`;
+
+//       console.log({ remaining });
+
+//       const isAfterNow2 = dayjs(target).isAfter(dayjs());
+
+//       if (remaining < (0.0).toPrecision(6) && !isAfterNow2) {
+//         console.log('yo stop it');
+//         clearInterval(intervalID);
+
+//         const tabs = await browser.tabs.query({ currentWindow: true });
+
+//         if (tabs.length > 0) {
+//           tabs.forEach(({ url, id }) => {
+//             const [baseURL] = url.match(baseURLRegex) ?? [];
+
+//             const pausedURL = list.map(({ url }) => {
+//               const [baseURL] = url.match(baseURLRegex);
+//               return baseURL;
+//             });
+
+//             if (pausedURL.includes(baseURL)) {
+//               browser.tabs.sendMessage(id, {
+//                 isBreak: false,
+//                 id: 'onBreak',
+//               });
+//             }
+//           });
+//         }
+
+//         browser.storage.local.set({ isBreak: false, target: null });
+//         browser.browserAction.setBadgeText({ text: '' });
+//       } else {
+//         browser.browserAction.setBadgeText({ text: timeLeft });
+//         browser.browserAction.setBadgeBackgroundColor({ color: '#374862' });
+//       }
+//     }, 100);
+//   }
+// });
+
+chrome.idle.onStateChanged.addListener(async state => {
+  if (state === 'active') {
+    const { list, active, isBreak, target } = await browser.storage.local.get();
+
+    const isAfterNow = dayjs(target).isAfter(dayjs());
+
+    console.log('isAfterNow->', isAfterNow);
+    console.log('intervalID->', intervalID);
+    console.log('targetEnd->', targetEnd);
+    console.log('target->', target);
+
+    if (!!target && isAfterNow && !intervalID && isBreak && active) {
+      console.log('heehehehe');
+
+      // clearInterval(intervalID);
+
+      intervalID = setInterval(async function() {
+        const now = new Date();
+
+        const remaining = (new Date(target) - now) / 1000;
+
+        const minutes = ~~(remaining / 60);
+        const seconds = ~~(remaining % 60);
+
+        const timeLeft = `${minutes}:${('00' + seconds).slice(-2)}`;
+
+        console.log({ remaining });
+
+        const isAfterNow2 = dayjs(target).isAfter(dayjs());
+
+        if (remaining < (0.0).toPrecision(6) && !isAfterNow2) {
+          console.log('yo stop it');
+          clearInterval(intervalID);
+
+          const tabs = await browser.tabs.query({ currentWindow: true });
+
+          if (tabs.length > 0) {
+            tabs.forEach(async ({ url, id }) => {
+              const [baseURL] = url.match(baseURLRegex) ?? [];
+
+              const pausedURL = list.map(({ url }) => {
+                const [baseURL] = url.match(baseURLRegex);
+                return baseURL;
+              });
+
+              console.log({ pausedURL });
+
+              if (pausedURL.includes(baseURL)) {
+                await browser.tabs.sendMessage(id, {
+                  isBreak: false,
+                  id: 'onBreak',
+                });
+              }
+            });
+          }
+          console.log({ tabs });
+
+          browser.storage.local.set({ isBreak: false, target: null });
+          browser.browserAction.setBadgeText({ text: '' });
+        } else {
+          browser.browserAction.setBadgeText({ text: timeLeft });
+          browser.browserAction.setBadgeBackgroundColor({ color: '#374862' });
+        }
+      }, 100);
+    }
+  }
+});
 
 browser.runtime.onMessage.addListener(async (request, sender) => {
   try {
