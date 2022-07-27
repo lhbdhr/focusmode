@@ -148,8 +148,9 @@ const init = async () => {
 // });
 
 chrome.idle.onStateChanged.addListener(async state => {
+  console.log({ state });
   if (state === 'active') {
-    const { list, active, isBreak, target } = await browser.storage.local.get();
+    const { list, active, isBreak, target, currentTabId } = await browser.storage.local.get();
 
     const isAfterNow = dayjs(target).isAfter(dayjs());
 
@@ -181,28 +182,35 @@ chrome.idle.onStateChanged.addListener(async state => {
           console.log('yo stop it');
           clearInterval(intervalID);
 
-          const tabs = await browser.tabs.query({ currentWindow: true });
+          // const tabs = await browser.tabs.query({ status: 'complete' });
+
+          const tabs = await browser.tabs.query({ active: true });
+          console.log({ tabs });
+
+          // const tabs = [{ id: currentTabId, url: window.location.href }];
+
+          // console.log({ tabs, tabss });
 
           if (tabs.length > 0) {
             tabs.forEach(async ({ url, id }) => {
-              const [baseURL] = url.match(baseURLRegex) ?? [];
+              browser.tabs.reload(id);
+              // const [baseURL] = url.match(baseURLRegex) ?? [];
 
-              const pausedURL = list.map(({ url }) => {
-                const [baseURL] = url.match(baseURLRegex);
-                return baseURL;
-              });
+              // const pausedURL = list.map(({ url }) => {
+              //   const [baseURL] = url.match(baseURLRegex);
+              //   return baseURL;
+              // });
 
-              console.log({ pausedURL });
+              // console.log({ pausedURL });
 
-              if (pausedURL.includes(baseURL)) {
-                await browser.tabs.sendMessage(id, {
-                  isBreak: false,
-                  id: 'onBreak',
-                });
-              }
+              // if (pausedURL.includes(baseURL)) {
+              //   await browser.tabs.sendMessage(id, {
+              //     isBreak: false,
+              //     id: 'onBreak',
+              //   });
+              // }
             });
           }
-          console.log({ tabs });
 
           browser.storage.local.set({ isBreak: false, target: null });
           browser.browserAction.setBadgeText({ text: '' });

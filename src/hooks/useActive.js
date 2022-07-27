@@ -8,7 +8,7 @@ export default function useActive({ shouldSync = false }) {
   // Syncing with storage after data changed
   useEffect(() => {
     if (shouldSync) {
-      browser.storage.local.set({ active });
+      browser.storage.local.set({ active, currentTabId });
       if (!active) {
         setIsBreak(false);
       }

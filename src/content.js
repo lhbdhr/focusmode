@@ -100,7 +100,6 @@ const Blocked = ({ shouldSync, onCloseTab }) => {
 
   const handleBreak = async () => {
     // const now = new Date();
-
     setIsBreak(true);
 
     const target = await browser.runtime.sendMessage({
@@ -180,6 +179,7 @@ const App = () => {
       } else if (request && request.id === 'onTarget') {
         setTarget(request.target);
       }
+      return true;
     });
     initRef.current = true;
   }, []);
