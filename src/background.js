@@ -194,20 +194,30 @@ chrome.idle.onStateChanged.addListener(async state => {
           if (tabs.length > 0) {
             tabs.forEach(async ({ url, id }) => {
               browser.tabs.reload(id);
-              // const [baseURL] = url.match(baseURLRegex) ?? [];
+              // if (url && isValidURL(url)) {
+              //   const match = url.match(baseURLRegex) ?? [];
 
-              // const pausedURL = list.map(({ url }) => {
-              //   const [baseURL] = url.match(baseURLRegex);
-              //   return baseURL;
-              // });
+              //   if (match) {
+              //     const baseURL = match[0];
 
-              // console.log({ pausedURL });
+              //     const pausedURL = list.map(({ url }) => {
+              //       const matchedURL = url.match(baseURLRegex);
 
-              // if (pausedURL.includes(baseURL)) {
-              //   await browser.tabs.sendMessage(id, {
-              //     isBreak: false,
-              //     id: 'onBreak',
-              //   });
+              //       if (matchedURL) {
+              //         return matchedURL[0];
+              //       }
+              //       return '';
+              //     });
+
+              //     console.log({ pausedURL });
+
+              //     if (pausedURL.includes(baseURL)) {
+              //       await browser.tabs.sendMessage(id, {
+              //         isBreak: false,
+              //         id: 'onBreak',
+              //       });
+              //     }
+              //   }
               // }
             });
           }
