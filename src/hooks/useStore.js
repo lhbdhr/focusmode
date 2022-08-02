@@ -39,13 +39,15 @@ const reducer = (state, { payload, type }) => {
   }
 };
 
+const intervalDuration = 5;
+
 const useStore = create(set => {
   return {
     active: false,
     list: [],
     currentTabId: '',
     isBreak: false,
-    interval: 5,
+    interval: intervalDuration,
     target: undefined,
     darkMode: window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches,
     setDarkMode: darkMode => {
@@ -64,46 +66,46 @@ const useStore = create(set => {
       set(() => ({ interval: interval * 60000 }));
     },
     fetch: async () => {
-      try {
-        const {
-          active,
-          list,
-          isBreak,
+      const {
+        active,
+        list,
+        isBreak,
+        target,
+        interval,
+        darkMode,
+      } = await browser?.storage?.local.get({
+        active: false,
+        list: getStubData(),
+        isBreak: false,
+        target: null,
+        interval: intervalDuration,
+        darkMode: window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches,
+      });
 
-          interval,
-          darkMode,
-        } = await browser?.storage?.local.get({
-          active: false,
-          list: getStubData(),
-          isBreak: false,
-          interval: 5,
-          darkMode: window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches,
-        });
-
-        set({
-          active,
-          list,
-          interval,
-
-          isBreak,
-          darkMode,
-        });
-        return {
-          active,
-          list,
-          interval,
-
-          isBreak,
-          darkMode,
-        };
-      } catch (error) {
-        console.log('error fetching from local storage', error);
-      }
+      set({
+        active,
+        list,
+        interval,
+        target,
+        isBreak,
+        darkMode,
+      });
+      return {
+        active,
+        list,
+        interval,
+        target,
+        isBreak,
+        darkMode,
+      };
     },
     getCurrentTabId: async () => {
       const tabs = await browser.tabs.query({ active: true, currentWindow: true });
 
       set({ currentTabId: tabs[0].id });
+    },
+    setCurrentTabId: tabId => {
+      set({ currentTabId: tabId });
     },
     dispatch: ({ type, payload }) => {
       set(state => ({ list: reducer(state.list, { type, payload }) }));

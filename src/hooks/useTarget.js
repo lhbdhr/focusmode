@@ -1,26 +1,30 @@
 import useStore from './useStore';
 import { useEffect } from 'react';
 import browser from 'webextension-polyfill';
-// import getStubData from '../context/FocusMode/getStubData';
-export const INIT = 'INIT';
-export default function useList({ shouldSync }) {
-  const { list, dispatch, currentTabId } = useStore();
+
+export default function useTarget({ shouldSync = false }) {
+  const { setTarget, target, currentTabId, setIsBreak } = useStore();
 
   // Syncing with storage after data changed
+
   useEffect(() => {
     if (shouldSync) {
-      browser.storage.local.set({ list });
+      browser.storage.local.set({ target });
+
+      if (!target) {
+        setIsBreak(false);
+      }
       if (currentTabId && browser && browser.tabs && browser.runtime?.id) {
         browser.tabs.sendMessage(currentTabId, {
-          list,
-          id: 'onChangeList',
+          target,
+          id: 'onTarget',
         });
       }
     }
-  }, [list, shouldSync, currentTabId]);
+  }, [target, shouldSync, currentTabId]);
 
   return {
-    list,
-    dispatch,
+    target,
+    setTarget,
   };
 }
