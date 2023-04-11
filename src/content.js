@@ -58,7 +58,7 @@ const Dialog = styled.dialog`
   justify-content: center;
   background: rgba(0, 0, 0, 0.8);
   backdrop-filter: saturate(0.5);
-  backdrop-filter: blur(2px);
+  backdrop-filter: blur(10px);
 `;
 
 const StyledMenu = styled.div`
