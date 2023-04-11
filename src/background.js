@@ -8,7 +8,7 @@ import duration from 'dayjs/plugin/duration';
 
 dayjs.extend(duration);
 
-let intervalID;
+let intervalID = null;
 let targetEnd;
 
 const isValidURL = url => {
@@ -24,6 +24,7 @@ const init = async () => {
 
   if (intervalID && isAfterNow && isBreak && active) {
     clearInterval(intervalID);
+    intervalID = null;
 
     intervalID = setInterval(async function() {
       const isAfterNow = dayjs(target).isAfter(dayjs(now));
@@ -38,6 +39,7 @@ const init = async () => {
 
       if (remaining < (0.0).toPrecision(6) && !isAfterNow) {
         clearInterval(intervalID);
+        intervalID = null;
 
         const tabs = await browser.tabs.query({ currentWindow: true });
 
@@ -181,6 +183,7 @@ chrome.idle.onStateChanged.addListener(async state => {
         if (remaining < (0.0).toPrecision(6) && !isAfterNow2) {
           console.log('yo stop it');
           clearInterval(intervalID);
+          intervalID = null;
 
           // const tabs = await browser.tabs.query({ status: 'complete' });
 
@@ -269,6 +272,7 @@ browser.runtime.onMessage.addListener(async (request, sender) => {
 
             if (remaining < (0.0).toPrecision(6) && !isAfterNow) {
               clearInterval(intervalID);
+              intervalID = null;
 
               const tabs = await browser.tabs.query({ currentWindow: true });
 
@@ -300,6 +304,7 @@ browser.runtime.onMessage.addListener(async (request, sender) => {
           }, 100);
         } catch (e) {
           clearInterval(intervalID);
+          intervalID = null;
         }
       };
       if (target) {
@@ -319,6 +324,7 @@ browser.runtime.onMessage.addListener(async (request, sender) => {
       // const { target } = await browser.storage.local.get();
 
       clearInterval(intervalID);
+      intervalID = null;
       browser.browserAction.setBadgeText({ text: '' });
 
       if (isDarkMode) {
